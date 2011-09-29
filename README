@@ -1,0 +1,14 @@
+Set up your repository:
+
+First, Add SSH Public Key to your GitHub account:
+http://help.github.com/linux-set-up-git/
+
+Second, clone the git
+git clone git@github.com:Softbass/DICTA-Memes.git
+
+You edit and push back with:
+git commit -am "my edit(your note)"
+git pull origin master
+git push origin master
+
+
