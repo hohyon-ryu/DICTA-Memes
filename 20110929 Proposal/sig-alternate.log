@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=latex 2011.5.4)  4 OCT 2011 16:20
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=latex 2011.5.4)  4 OCT 2011 16:33
 entering extended mode
  %&-line parsing enabled.
 **sig-alternate.tex
@@ -193,45 +193,45 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 50.
 LaTeX Font Info:    ... okay on input line 50.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 50.
 LaTeX Font Info:    ... okay on input line 50.
-LaTeX Font Info:    Try loading font information for U+msa on input line 135.
+LaTeX Font Info:    Try loading font information for U+msa on input line 136.
 
 (/usr/share/texmf-texlive/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2009/06/22 v3.00 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 135.
+LaTeX Font Info:    Try loading font information for U+msb on input line 136.
 
 (/usr/share/texmf-texlive/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 )
-LaTeX Font Info:    Try loading font information for U+lasy on input line 135.
+LaTeX Font Info:    Try loading font information for U+lasy on input line 136.
 
 (/usr/share/texmf-texlive/tex/latex/base/ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 )
-Overfull \hbox (32.58641pt too wide) in paragraph at lines 135--135
+Overfull \hbox (32.58641pt too wide) in paragraph at lines 136--136
  []\eaddfnt woodward.nicholas@gmail.com| 
  []
 
 
-Overfull \hbox (15.46922pt too wide) in paragraph at lines 138--139
+Overfull \hbox (15.46922pt too wide) in paragraph at lines 139--140
 \T1/aer/m/n/9 Intensive Com-put-ing for Text Anal-y-sis class. Us-ing MapReduce
 -
  []
 
 
-Overfull \hbox (2.14119pt too wide) in paragraph at lines 145--146
+Overfull \hbox (2.14119pt too wide) in paragraph at lines 146--147
 \T1/aer/m/n/9 neous; H.5.4 [\T1/aer/bx/n/9 Information In-ter-faces and Pre-sen
 -ta-tion\T1/aer/m/n/9 ]:
  []
 
 
-Overfull \hbox (5.89851pt too wide) in paragraph at lines 149--150
+Overfull \hbox (5.89851pt too wide) in paragraph at lines 150--151
 \T1/aer/m/n/9 Keyword Ex-trac-tion, Data-intensive Pro-cess-ing, Im-plicit link
 s
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 154--154
+Underfull \hbox (badness 10000) in paragraph at lines 155--155
 [][]\T1/aer/m/n/9 http://www.minvolai.com/blog/decruft-arc90s-
  []
 
@@ -239,22 +239,22 @@ Underfull \hbox (badness 10000) in paragraph at lines 154--154
 
 
 ]
-Overfull \hbox (16.04012pt too wide) in paragraph at lines 184--184
+Overfull \hbox (16.04012pt too wide) in paragraph at lines 185--185
 []\secfnt APPLICATION FOR EX-TRACTED MEMES 
  []
 
 
-Overfull \hbox (16.84624pt too wide) in paragraph at lines 192--192
+Overfull \hbox (16.84624pt too wide) in paragraph at lines 193--193
 []\secfnt Information Re-trieval Per-for-mance Im-prove-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 196--196
+Underfull \hbox (badness 10000) in paragraph at lines 197--197
 [][]\T1/aer/m/n/9 http://www.umiacs.umd.edu/ jim-
  []
 
 
-Overfull \hbox (3.73264pt too wide) in paragraph at lines 208--211
+Overfull \hbox (3.73264pt too wide) in paragraph at lines 209--212
 []\T1/aer/m/n/9 Hohyon Ryu: Meme Ex-trac-tion, Meme Track-ing Jae Hyeon
  []
 
@@ -270,4 +270,4 @@ Here is how much of TeX's memory you used:
  28 hyphenation exceptions out of 8191
  39i,10n,26p,1241b,252s stack positions out of 5000i,500n,10000p,200000b,50000s
 
-Output written on sig-alternate.dvi (3 pages, 18864 bytes).
+Output written on sig-alternate.dvi (3 pages, 18976 bytes).
