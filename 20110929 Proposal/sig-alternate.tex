@@ -55,10 +55,10 @@
 \crdata{0-12345-67-8/90/01}  % Allows default copyright data (0-89791-88-6/97/05) to be over-ridden - IF NEED BE.
 % --- End of Author Metadata ---
 
-\title{MapReduce Data Processing to Data-Mine the Blogosphere}% \titlenote{(Produces the permission block, and
+\title{Meme Tracking in Scale with MapReduce}% \titlenote{(Produces the permission block, and
 %copyright information). For use with
 %SIG-ALTERNATE.CLS. Supported by ACM.}}
-\subtitle{Project Ideas}
+\subtitle{Project Proposal}
 %\titlenote{A full version of this paper is available as
 %\textit{Author's Guide to Preparing ACM SIG Proceedings Using
 %\LaTeX$2_\epsilon$\ and BibTeX} at
@@ -114,6 +114,11 @@ Jae Hyeon Bae\\
        \affaddr{Computer Science}\\
        \affaddr{University of Texas at Austin}\\
        \email{metacret@gmail.com}
+\alignauthor
+Nicholas Woodward\\
+       \affaddr{School of Information}\\
+       \affaddr{University of Texas at Austin}\\
+       \email{woodward.nicholas@gmail.com}
 }
 % There's nothing stopping you putting the seventh, eighth, etc.
 % author on the opening page (as the 'third row') but we ask,
@@ -145,41 +150,87 @@ This article is to present project ideas for Fall 2011 Data-Intensive Computing 
 
 \section{Introduction}
 
-Blog is a very important and interesting source of diverse information. People search blogs to find out how to cook, what to do, what to see, and to discover what others think. Since blogs are usually written in plain language by individuals enthusiastic for their interest, blogs may be a lot more understandable than news articles and cover a very wide personal range of topics. However, unlike web information retrieval, blog information retrieval is still very limited and faces many challenges. Some well-established Web information retrieval techniques do not perform well on blogs because of sparse links, multimedia contents and the short length of the contents \cite{Agarwal}. In particular, PageRank \cite{Brin1998a}, which made a revolutionary improvement by taking into account the link structure of HTML Web documents, does not perform well for blog posts as they lack strong link structure. Another problem for blog information retrieval is the length of the blog posts. They vary from one line to several pages and require smoothing or normalization to achieve effective information retrieval. 
+Web logs, also known as blogs, are a very important and interesting source of diverse information. They provide insight into the culture of the society in which they exist. People search blogs to find out how to cook, what to do, what to see, and to discover what others think. Since blogs are usually written in plain language by individuals enthusiastic for their interest, blogs may be a lot more understandable than news articles and cover a very wide personal range of topics. However, unlike web information retrieval, blog information retrieval is still very limited and faces many challenges. Some well-established Web information retrieval techniques do not perform well on blogs because of sparse links, multimedia contents and the short length of the contents \cite{Agarwal}. In particular, PageRank \cite{Brin1998a}, which made a revolutionary improvement by taking into account the link structure of HTML Web documents, does not perform well for blog posts as they lack strong link structure. Another problem for blog information retrieval is the length of the blog posts. They vary from one line to several pages and require smoothing or normalization to achieve effective information retrieval. 
 	In this study, a novel method for augmenting implicit citation links to the explicit HTML links and document expansion for blog posts will be introduced. Extraction of implicit citation links from blog posts will address the sparse link problem that hampers utilizing PageRank and other link-based retrieval algorithms for blog information retrieval. The methodology of extracting implicit citation will utilize Blog content extraction using Decruft\footnote{http://www.minvolai.com/blog/decruft-arc90s-readability-in-python/} and noun chunk extraction based on Python NLTK\footnote{Natural Language Toolkit, http://www.nltk.org/}. By augmenting documents implicit links, the proposed method tries to improve blog information retrieval. I will also explore possible other applications to improve information presentation for the Blogosphere.
 
 
-\section{Project Ideas}
+\section{Meme Extraction}
 
-\subsection{Blog Information Retrieval Performance Improvement Using Implicit Links}
+\subsection{Test Collection}
 
-The idea of using link structure for information retrieval has been recognized as the key to successful information retrieval ever since the emergence of Google and its core algorithm, PageRank \cite{Brin1998a}. Another trial to make use of links for information retrieval was proposed was HITS \cite{Kleinberg1999}, and PageRank and HITS are now the minimum standard of the web information retrieval to assure the quality of the retrieved web pages. However, unfortunately, these powerful algorithms cannot be fully exploited for blog information retrieval due to lack of strong link structure in the blogosphere. 
+BLOGS08\footnote{http://ir.dcs.gla.ac.uk/test\_collections/blogs08info.html} is a TREC\footnote{http://trec.nist.gov/} test collection that crawled Web Logs from Jan/14/2008 to Feb/10/2009. It consists of 3 components: feeds, permalink documents, and homepage documents. We use only permalink documents that contain 28,488,766 documents and whose uncompressed size is 1445GB. Since the collection contains many duplicates, non-English blog posts, advertisement, and Blog website frameworks, we used NLTK and Decruft to extract English blog contents without boilerplate text.
 
-With extracted keyphrases using MapReduce and NLTK, we will provide more prior information for a MapReduce-based search engine Ivory\footnote{http://www.umiacs.umd.edu/~jimmylin/ivory/docs/index.html}, to improve blog search performance.
+\subsection{Preprocessing Blogs08}
 
-\subsection{Meme clustering and topic analysis}
-Clustering is the most basic technique to retrieve meaningful information from the corpus. In this project, we will use K-means clustering as the starting point. Since we do not have any prior information of meme distribution, we will apply Canopy clustering \cite{Andrew00} to choose initial seeds of clustering instead of random seeds selection of K-means clustering. There are two threshold parameters $T_1,T_2,T_1>T_2$ at Canopy clustering. Because this algorithm is pretty fast, we can experiment with various combination of threshold parameters to get reasonable number of clusters. After K-means clustering with centroids generated by Canopy algorithm, we can start analyzing meme distribution in each cluster and find which memes are releated each other.
+Preprocessing Blogs08 Collection is done using Python with NLTK and Decruft packages. Decruft extracts only meaningful content from a blog page filtering out navigation links, advertisements, sidebar contents, and link to other contents and sites. Using language identification module, NLTK checks if the extracted content is written in English. Blogs08 also contains tremendous amount of duplicate documents and documents without significant amount of text. We set a lower-bound of 5 words and remove duplicates also using Python. After all these preprocess, every extracted content of a blog post is written into a single line per document for MapReduce meme extraction process.
+
+\subsection{Meme Extraction}
+
+Preprocessed Blogs08 data comprises of key-value pair where the key is document number(docno) and the value is the preprocessed HTML content of the document. Using Hadoop Streaming, Python MapReduce codes extract candidate phrases and group documents by the common phrases. The mapper first processes input HTML content using BeautifulSoap\footnote{http://www.crummy.com/software/BeautifulSoup/} and strips off HTML tags and JavaScripts. Using NLTK, the mapper tags all the words' part of speech using HUNPOS-tagger\footnote{http://code.google.com/p/hunpos/} and extract noun phrases, verb phrases, prepositional phrases, and the combinations of these phrases. The mapper outputs the text key-value pairs where key is a phrase, and the value is docno. The reducer collects all the docnos that share the same phrase and output the phrase and docnos pair. If the number of documents is less than 5, the reducer ignores the phrase.
+
+\subsection{Meme Clustering and Topic Analysis}
+To track mutation and propagation of similar memes, similar memes need to be grouped together. For the grouping, we used MapReduce-based clustering. Clustering is the most basic technique to retrieve meaningful information from the corpus. In this project, we will use K-means clustering as the starting point. Since we do not have any prior information of meme distribution, we will apply Canopy clustering \cite{McCallum2000} to choose initial seeds of clustering instead of random seeds selection of K-means clustering. There are two threshold parameters $T_1,T_2,T_1>T_2$ at Canopy clustering. Because this algorithm is pretty fast, we can experiment with various combination of threshold parameters to get reasonable number of clusters. After K-means clustering with centroids generated by Canopy algorithm, we can start analyzing meme distribution in each cluster and find which memes are releated each other.
 Cosine distance will be used as the distance measure between two memes. Suppose that document $P,Q$ are represented as two vectors $(P_0, P_1,...,P_n)$ and $(Q_0, Q_1,...,Q_n)$, cosine distance between two documents can be expressed mathematically as the following:
 \begin{displaymath}
 D(P,Q)=1-\frac{\sum(P_i \times Q_i)}{\sqrt{\sum{(P_i)^2} \times \sum{(Q_i)^2}}}
 \end{displaymath}
-For Canopy generation and K-means clustering, Apache Mahout \cite{Mahout} implementation will be used. 
-Latent Dirichlet Allocation (LDA)\cite{Blei2003} is a generative probabilistic model that can be utilized to detect topics in a document collection. LDA models the document as the random mixture over latent topics and topic can be represented by a distribution over words. Using LDA, we can get meme mixtures for each topic and topic assignments for memes in each document. Thus, armed with LDA, we can group memes with similar topics and analyze many things including topic distrubition over documents and relationshp among topic space. Yahoo! LDA \cite{YLDA} implementation will be used. LDA algorithm also needs several parameters, of which the most critical parameter, the number of topics should be specified. This number can be same as K set with above K-means clustering. But for finding optimal the number of topics, we will calculate perplexity of test collection with the various number of topics. Formally, for a test set of M documents, the perplexity is
+For Canopy generation and K-means clustering, Apache Mahout\footnote{http://mahout.apache.org} implementation will be used. 
+Latent Dirichlet Allocation (LDA)\cite{Blei2003} is a generative probabilistic model that can be utilized to detect topics in a document collection. LDA models the document as the random mixture over latent topics and topic can be represented by a distribution over words. Using LDA, we can get meme mixtures for each topic and topic assignments for memes in each document. Thus, armed with LDA, we can group memes with similar topics and analyze many things including topic distrubition over documents and relationshp among topic space. Yahoo! LDA\footnote{https://github.com/shravanmn/Yahoo\_LDA}  implementation will be used. LDA algorithm also needs several parameters, of which the most critical parameter, the number of topics should be specified. This number can be same as K set with above K-means clustering. But for finding optimal the number of topics, we will calculate perplexity of test collection with the various number of topics. Formally, for a test set of M documents, the perplexity is
 \begin{displaymath}
  perplexity(D_{test})=exp\{-\frac{\sum_{d=1}^M log\ p(\mathbf{w}_d)}{\sum_{d=1}^M N_d}\}
 \end{displaymath}
+
+
+\section{Application for Extracted Memes}
+
+\subsection{Meme Tracking}
+
+\subsection{Meme Source Analysis}
+
+\subsection{Improved User Interface}
+
+\subsection{Information Retrieval Performance Improvement}
+
+The idea of using link structure for information retrieval has been recognized as the key to successful retrieval algorithms since the emergence of Google and its core algorithm, PageRank \cite{Brin1998a}. Another effective approach to utilizing links in information retrieval called HITS was proposed around the same time \cite{Kleinberg1999}.  PageRank and HITS are now the minimum standard of the web information retrieval to assure the quality of the retrieved web pages. Unfortunately, these powerful algorithms cannot be fully exploited for blog information retrieval due to lack of strong link structure in the blogosphere. 
+
+With extracted keyphrases using MapReduce and NLTK, we will provide more prior information for a MapReduce-based search engine Ivory\footnote{http://www.umiacs.umd.edu/~jimmylin/ivory/docs/index.html}, to improve blog search performance.
+
+
 \subsection{Visualization for Users}
 
 There has been many attempts to visualize blogosphere \cite{Tauro2008, Uchida2007}, however they could hardly help users for better navigation. Using the visualization techniques integrated into the navigation system, we would be able to benefit actual users to find the blog articles better and to navigate between related articles easily.
 
-%ACKNOWLEDGMENTS are optional
-\section{Acknowledgments}
-Jae Hyeon Bae will join with me for the final project.
+
+\section{Project Plan}
+
+\subsection{Division of Work}
+
+Hohyon Ryu: Meme Extraction, Meme Tracking
+Jae Hyeon Bae: Clustering Memes, Scalability Issues
+Nicholas Woodward: Application, Theoretical Background, Meme Tracking
+
+\subsection{Timeline}
+
+
+\begin{itemize}
+  \item Oct/6: Preprocessing
+  \item Oct/13: Meme Extraction
+  \item Oct/20 \& 27: Meme Clustering
+  \item Nov/3 \& 10: Meme Tracking and Application
+  \item Nov/10: Presentation Webpage Buildup
+  \item Nov/17: Finalizing Paper
+  \item Dec/1: Presentation
+\end{itemize}
+
+
 %
 % The following two commands are all you need in the
 % initial runs of your .tex file to
 % produce the bibliography for the citations in your paper.
 \bibliographystyle{abbrv}
 \bibliography{sigproc}  % sigproc.bib is the name of the Bibliography in this case
+
+
+
 
 \end{document}

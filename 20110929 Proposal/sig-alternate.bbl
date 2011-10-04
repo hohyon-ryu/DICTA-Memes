@@ -22,6 +22,13 @@ J.~Kleinberg.
 \newblock {Authoritative sources in a hyperlinked environment}.
 \newblock {\em Journal of the ACM (JACM)}, 46(5):604--632, Sept. 1999.
 
+\bibitem{McCallum2000}
+A.~McCallum, K.~Nigam, and L.~H. Ungar.
+\newblock {Efficient clustering of high-dimensional data sets with application
+  to reference matching}.
+\newblock {\em Proceedings of the sixth ACM SIGKDD international conference on
+  Knowledge discovery and data mining - KDD '00}, pages 169--178, 2000.
+
 \bibitem{Tauro2008}
 C.~Tauro, M.~A. P\'{e}rez-Qui\~{n}ones, P.~Isenhour, S.~Ahuja, and
   A.~Kavanaugh.
