@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.9.29)  1 OCT 2011 22:42
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2011.8.26)  3 OCT 2011 21:51
 entering extended mode
  %&-line parsing enabled.
 **sig-alternate.tex
@@ -208,77 +208,86 @@ LaTeX Font Info:    ... okay on input line 50.
 \MPnumerator=\count113
 \everyMPtoPDFconversion=\toks37
 )
-LaTeX Font Info:    Try loading font information for U+msa on input line 135.
+LaTeX Font Info:    Try loading font information for U+msa on input line 130.
  (/usr/share/texmf-texlive/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2009/06/22 v3.00 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 135.
+LaTeX Font Info:    Try loading font information for U+msb on input line 130.
 
 (/usr/share/texmf-texlive/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2009/06/22 v3.00 AMS symbols B
 )
-LaTeX Font Info:    Try loading font information for U+lasy on input line 135.
+LaTeX Font Info:    Try loading font information for U+lasy on input line 130.
 
 (/usr/share/texmf-texlive/tex/latex/base/ulasy.fd
 File: ulasy.fd 1998/08/17 v2.2e LaTeX symbol font definitions
 )
-Overfull \hbox (15.46922pt too wide) in paragraph at lines 138--139
+Overfull \hbox (15.46922pt too wide) in paragraph at lines 133--134
 \T1/aer/m/n/9 Intensive Com-put-ing for Text Anal-y-sis class. Us-ing MapReduce
 -
  []
 
 
-Overfull \hbox (2.14119pt too wide) in paragraph at lines 145--146
+Overfull \hbox (2.14119pt too wide) in paragraph at lines 140--141
 \T1/aer/m/n/9 neous; H.5.4 [\T1/aer/bx/n/9 Information In-ter-faces and Pre-sen
 -ta-tion\T1/aer/m/n/9 ]:
  []
 
 
-Overfull \hbox (5.89851pt too wide) in paragraph at lines 149--150
+Overfull \hbox (5.89851pt too wide) in paragraph at lines 144--145
 \T1/aer/m/n/9 Keyword Ex-trac-tion, Data-intensive Pro-cess-ing, Im-plicit link
 s
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 154--154
+Underfull \hbox (badness 10000) in paragraph at lines 149--149
 [][]\T1/aer/m/n/9 http://www.minvolai.com/blog/decruft-arc90s-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 163--163
+Underfull \hbox (badness 10000) in paragraph at lines 158--158
 [][]\T1/aer/m/n/9 http://www.umiacs.umd.edu/ jim-
  []
 
+[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
 
-Underfull \vbox (badness 1033) has occurred while \output is active []
-
- [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
-
-
-] (./sig-alternate.bbl) [2
 
 ]
-(./sig-alternate.aux) ) 
+
+LaTeX Warning: Citation `Andrew00' on page \thepage  undefined on input line 16
+1.
+
+
+LaTeX Warning: Citation `Mahout' on page \thepage  undefined on input line 166.
+
+
+
+LaTeX Warning: Citation `YLDA' on page \thepage  undefined on input line 167.
+
+(./sig-alternate.bbl) [2] (./sig-alternate.aux) ) 
 Here is how much of TeX's memory you used:
- 2199 strings out of 495061
- 24826 string characters out of 1182621
+ 2207 strings out of 495061
+ 24902 string characters out of 1182621
  81822 words of memory out of 3000000
- 5344 multiletter control sequences out of 15000+50000
- 52836 words of font info for 70 fonts, out of 3000000 for 9000
+ 5350 multiletter control sequences out of 15000+50000
+ 53457 words of font info for 72 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
  39i,10n,26p,1140b,252s stack positions out of 5000i,500n,10000p,200000b,50000s
-{/usr/share/texmf-texlive/fonts/enc/dvips/base/8r.enc}</
-usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/te
-xmf-texlive/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texmf-texlive/f
-onts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texmf-texlive/fonts/type1/pu
-blic/amsfonts/cm/cmti9.pfb></usr/share/texmf-texlive/fonts/type1/urw/helvetic/u
-hvb8a.pfb></usr/share/texmf-texlive/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/s
-hare/texmf-texlive/fonts/type1/urw/times/utmb8a.pfb></usr/share/texmf-texlive/f
-onts/type1/urw/times/utmr8a.pfb></usr/share/texmf-texlive/fonts/type1/urw/times
-/utmri8a.pfb>
-Output written on sig-alternate.pdf (2 pages, 124278 bytes).
+{/usr/share/texmf-texlive/font
+s/enc/dvips/base/8r.enc}</usr/share/texmf-texlive/fonts/type1/public/amsfonts/c
+m/cmbx9.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cmextra/cmex9
+.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/s
+hare/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texmf-t
+exlive/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texmf-texlive/fonts/
+type1/public/amsfonts/cm/cmr9.pfb></usr/share/texmf-texlive/fonts/type1/public/
+amsfonts/cm/cmsy9.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/
+cmti9.pfb></usr/share/texmf-texlive/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/s
+hare/texmf-texlive/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/share/texmf-texliv
+e/fonts/type1/urw/times/utmb8a.pfb></usr/share/texmf-texlive/fonts/type1/urw/ti
+mes/utmr8a.pfb></usr/share/texmf-texlive/fonts/type1/urw/times/utmri8a.pfb>
+Output written on sig-alternate.pdf (2 pages, 164830 bytes).
 PDF statistics:
- 46 PDF objects out of 1000 (max. 8388607)
+ 62 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
