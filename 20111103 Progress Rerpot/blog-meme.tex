@@ -136,7 +136,7 @@ Nicholas Woodward\\
 \maketitle
 \begin{abstract}
 
-This article is to report our project progress for Fall 2011 Data-Intensive Computing for Text Analysis class. Preprocessing the Blogs08 collection is done first to scrap out HTML tags, boiler plate text, non-English documents, and duplicates. After the preprocess, about 4 million popular common phrases are extracted using an enhanced version of the technique suggested by \cite{Kolak2008}. The extracted phrases are clustered in 2 million meme groups. The meme groups will be ranked automatically using Support Vector Machine, based on the crowdsourced labels at Amazon Mechanical Turk.
+This article is to report our project progress for Fall 2011 Data-Intensive Computing for Text Analysis class. Preprocessing the Blogs08 collection is done first to scrap out HTML tags, boilerplate text, non-English documents, and duplicates. After the preprocess, about 4 million popular common phrases are extracted using an enhanced version of the technique suggested by \cite{Kolak2008}. The extracted phrases are clustered in 2 million meme groups. The meme groups will be ranked automatically using Support Vector Machine, based on the crowdsourced labels at Amazon Mechanical Turk.
 
 \end{abstract}
 
@@ -151,7 +151,10 @@ This article is to report our project progress for Fall 2011 Data-Intensive Comp
 
 \section{Introduction}
 
-Web logs, also known as blogs, are a very important and interesting source of diverse information. They provide insight into the culture of the society in which they exist. People search blogs to find out how to cook, what to do, what to see, and to discover what others think. Because blogs are typically written in plain language by individuals enthusiastic for their interest, they may be more easily understood than longer, more-detailed news articles and cover a wider personal range of topics. However, unlike web information retrieval, blog information retrieval is still very limited and faces many challenges. Some well-established Web information retrieval techniques do not perform well on blogs because of sparse links, multimedia contents and the short length of the contents \cite{Agarwal}. In particular, PageRank \cite{Brin1998a}, which made a revolutionary improvement by taking into account the link structure of HTML Web documents, does not perform well for blog posts as they lack strong link structure. Another problem for blog information retrieval is the length of the blog posts. They vary from one line to several pages and require smoothing or normalization to achieve effective information retrieval. 
+Web logs, also known as blogs, are a very important and interesting source of diverse information. They provide insight into the culture of the society in which they exist. People search blogs to find out how to cook, what to do, what to see, and to discover what others think. Because blogs are typically written in plain language by individuals enthusiastic for their interest, they may be more easily understood than longer, more-detailed news articles and cover a wider personal range of topics. 
+As blogs are highly sensitive to fast-changing temporal issues, finding and tracking memes, pieces of information that travel across blog posts, we can mine variety of issues and fads in the blogosphere.
+
+** Nick and Jae, please help fill out the intro part together.
 
 
 \section{Meme Extraction}
