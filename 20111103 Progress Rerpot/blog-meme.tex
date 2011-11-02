@@ -349,7 +349,7 @@ which means how similar memes in the cluster are each other.
 \subsection{Building Training Set at Amazon Mechanical Turk}
 
 Ranking the meme clusters based upon their meaningfulness or informativeness as described above is a difficult and largely subjective task, making it difficult to perform with machine learning.  For this reason, we are implementing an Amazon Mechanical Turk that will ask users to answer a set of basic yes/no questions about sample meme clusters to determine their meaningfulness.   
-  Users will be asked questions such as "Is this a meaningful chunk of information?" and "Is this a common expression that could potentially appear elsewhere?" for approximately 1500 meme clusters in order to build a training set of memes that we can input into the Support Vector Machine for automatic meme ranking.
+  Users will be asked questions such as "Is this a meaningful chunk of information?" and "Is this a common expression that could potentially appear elsewhere?" for approximately 1500 meme clusters.  The composite score of each meme cluster will determine if it is meaningful or not.  Using these labels we will build a training set of memes that can serve as input to the Support Vector Machine for automatic meme ranking.
 
 \subsection{Automatic Meme Ranking using Support Vector Machine}
 We will use Support Vector Machine for meme ranking. Armed with LIBSVM package\footnote{http://www.csie.ntu.edu.tw/~cjlin/libsvm/}, we will train C-SVM and regard each probability value as the ranking score. For better performance, we should scale feature values and use grid search to find suitable parameters.
