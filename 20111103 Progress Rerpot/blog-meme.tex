@@ -136,7 +136,7 @@ Nicholas Woodward\\
 \maketitle
 \begin{abstract}
 
-This article is to report our project progress for Fall 2011 Data-Intensive Computing for Text Analysis class. Preprocessing the Blogs08 collection is done first to scrap out HTML tags, boilerplate text, non-English documents, and duplicates. After the preprocess, about 4 million popular common phrases are extracted using an enhanced version of the technique suggested by \cite{Kolak2008}. The extracted phrases are clustered in 2 million meme groups. The meme groups will be ranked automatically using Support Vector Machine, based on the crowdsourced labels at Amazon Mechanical Turk.
+This article is to report our project progress for Fall 2011 Data-Intensive Computing for Text Analysis class. We have completed preprocessing of the Blogs08 collection by removing all HTML tags, boilerplate text, non-English documents, and duplicates. After the preprocessing, aproximately 4 million popular common phrases were extracted using an enhanced version of the technique suggested by \cite{Kolak2008}. The extracted phrases are clustered in 2 million meme groups. The meme groups will be ranked automatically using Support Vector Machine, based on the crowdsourced labels at Amazon Mechanical Turk.
 
 \end{abstract}
 
@@ -285,7 +285,7 @@ which means how similar memes in the cluster are each other.
 Nick's part
 
 \subsection{Automatic Meme Ranking using Support Vector Machine}
-We will use Support Vector Machine for meme ranking. Armed with LIBSVM package, we will learn C-SVM and regard each probability value as the ranking score. For better performance, we should scale feature values and use grid search to find suitable parameters.
+We will use Support Vector Machine for meme ranking. Utilizing the LIBSVM package, we will learn C-SVM and regard each probability value as the ranking score. For better performance, we will scale feature values and use grid search to find suitable parameters.
 
 \section{Evaluation}
 
