@@ -136,7 +136,7 @@ Nicholas Woodward\\
 \maketitle
 \begin{abstract}
 
-This article is to report our project progress for Fall 2011 Data-Intensive Computing for Text Analysis class. Preprocessing the Blogs08 collection is done first to scrap out HTML tags, boilerplate text, non-English documents, and duplicates. After the preprocess, about 4 million popular common phrases are extracted using an enhanced version of the technique suggested by \cite{Kolak2008}. The extracted phrases are clustered in 2 million meme groups. The meme groups will be ranked automatically using Support Vector Machine, based on the crowdsourced labels at Amazon Mechanical Turk.
+This article is to report our project progress for Fall 2011 Data-Intensive Computing for Text Analysis class. We have completed preprocessing of the Blogs08 collection by removing all HTML tags, boilerplate text, non-English documents, and duplicates. After the preprocessing, aproximately 4 million popular common phrases were extracted using an enhanced version of the technique suggested by \cite{Kolak2008}. The extracted phrases are clustered in 2 million meme groups. The meme groups will be ranked automatically using Support Vector Machine, based on the crowdsourced labels at Amazon Mechanical Turk.
 
 \end{abstract}
 
@@ -165,7 +165,7 @@ BLOGS08\footnote{http://ir.dcs.gla.ac.uk/test\_collections/blogs08info.html} is 
 
 \subsection{Preprocessing Blogs08}
 
-Preprocessing Blogs08 Collection is done using Python with NLTK and Decruft packages. Decruft extracts only meaningful content from a blog page filtering out navigation links, advertisements, sidebar contents, and link to other contents and sites. Using a language identification module, NLTK checks if the extracted content is written in English. Blogs08 also contains tremendous amount of duplicate documents and documents without significant amount of text. We set a lower-bound of 5 words and removed duplicates also using Python. After all these preprocesses are completed, every extracted content of a blog post is written into a single line per document for the MapReduce meme extraction process. The number of Decruft-applied, deduplicated, and HTML stripped English blog posts is 15,097,266 (43 GB).
+Preprocessing of the Blogs08 Collection was completed using Python with NLTK and Decruft packages. Decruft extracts only meaningful content from a blog page, filtering out navigation links, advertisements, sidebar contents, and links to other sites. Using a language identification module, NLTK checks if the extracted content is written in English. Blogs08 also contains a tremendous amount of duplicate documents and documents without a significant amount of text. We set a lower-bound of 5 words and removed duplicates, also using Python. After all these preprocessing steps were completed, extracted contents of a blog post are written into a single line per document for the MapReduce meme extraction process. The number of Decruft-applied, deduplicated, and HTML stripped English blog posts is 15,097,266 (43 GB).
 
 \subsection{Meme Extraction with MapReduce}
 
@@ -196,7 +196,7 @@ for \= ($trigrams$, [($doc\_id$, $index$)]) in [mapper 1 output]:\\
 \end{tabbing}
 \end{centering}
 
-The second MapReduce sort the trigrams and indices by document to concatenate adjacent trigrams in MapReduce 3:
+The second MapReduce sorts the trigrams and indices by document to concatenate adjacent trigrams in MapReduce 3:
 
 \begin{centering}
 \begin{tabbing}
@@ -214,7 +214,7 @@ for \= ($doc\_id$, [($trigrams$, $index$)]) in [mapper 2 output]:\\
 
 \end{centering}
 
-The third MapReduce concatenates the adjacent trigrams within a blog post. Mapper 3 concatenates adjacent trigram into a meme. Before emitting the memes, a function trimPrepositions trims off prepositions in the beginning and end of the meme, and a function stopwordRate checks how many of the words in the meme are stop words. If stop words take more than 65\% of the words in the meme, the meme is ignored. In the reducer 3, too short phrases ($\leqq 5$) and too long phrases ($\geqq 200$) are ignored as they are often timestamps, advertisement, or boiler plate text. The final MapReduce is illustrated as follows:
+The third MapReduce concatenates the adjacent trigrams within a blog post. Mapper 3 concatenates adjacent trigrams into a meme. Before emitting the memes, a function trimPrepositions trims off prepositions at the beginning and end of the meme, and a function stopwordRate checks how many of the words in the meme are stop words. If stop words take more than 65\% of the words in the meme, the meme is ignored. In the reducer 3, phrases that are too short ($\leqq 5$) or too long ($\geqq 200$) are ignored as they are often timestamps, advertisement, or boiler plate text. The final MapReduce is illustrated as follows:
 
 \begin{centering}
 \begin{tabbing}
@@ -354,6 +354,7 @@ Nick's part
 
 \subsection{Automatic Meme Ranking using Support Vector Machine}
 We will use Support Vector Machine for meme ranking. Armed with LIBSVM package\footnote{http://www.csie.ntu.edu.tw/~cjlin/libsvm/}, we will train C-SVM and regard each probability value as the ranking score. For better performance, we should scale feature values and use grid search to find suitable parameters.
+
 
 \section{Evaluation}
 
