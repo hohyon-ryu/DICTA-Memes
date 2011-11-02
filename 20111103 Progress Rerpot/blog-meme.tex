@@ -154,7 +154,7 @@ This article is to report our project progress for Fall 2011 Data-Intensive Comp
 Web logs, also known as blogs, are a very important and interesting source of diverse information. They provide insight into the culture of the society in which they exist. People search blogs to find out how to cook, what to do, what to see, and to discover what others think. Because blogs are typically written in plain language by individuals enthusiastic for their interest, they may be more easily understood than longer, more-detailed news articles and cover a wider personal range of topics. 
 As blogs are highly sensitive to fast-changing temporal issues, finding and tracking memes, pieces of information that travel across blog posts, we can mine variety of issues and fads in the blogosphere.
 
-** Nick and Jae, please help fill out the intro part together.
+** Nick and Jae, please help fill out the intro part.
 
 
 \section{Meme Extraction}
@@ -167,9 +167,9 @@ BLOGS08\footnote{http://ir.dcs.gla.ac.uk/test\_collections/blogs08info.html} is 
 
 Preprocessing Blogs08 Collection is done using Python with NLTK and Decruft packages. Decruft extracts only meaningful content from a blog page filtering out navigation links, advertisements, sidebar contents, and link to other contents and sites. Using a language identification module, NLTK checks if the extracted content is written in English. Blogs08 also contains tremendous amount of duplicate documents and documents without significant amount of text. We set a lower-bound of 5 words and removed duplicates also using Python. After all these preprocesses are completed, every extracted content of a blog post is written into a single line per document for the MapReduce meme extraction process. The number of Decruft-applied, deduplicated, and HTML stripped English blog posts is 15,097,266 (43 GB).
 
-\subsection{Meme Extraction}
+\subsection{Meme Extraction with MapReduce}
 
-Preprocessed Blogs08 data is comprised of key-value pair where the key is document number(docno) and the value is the preprocessed content of the blog posts. Using Hadoop Streaming, Python MapReduce code extracts common phrases and group documents by them. Overall algorithm design follows that of \cite{Kolak2008}. However, because of scalability issues, lower bounds and upper bounds limit the output size of the data, and other optimizations are used such as stop word ratio check and preposition trimming. The 3 steps of MapReduce pseudo-code for Meme Extraction is illustrated in the following pseudo codes. The first MapReduce splits the input text into sentences and extract trigrams and their index within the document. The reducer cuts off the common phrases($trigrams$) that appear less than 5 times or more than 300,000 times.
+Preprocessed Blogs08 data is comprised of key-value pair where the key is document number(docno) and the value is the preprocessed content of the blog posts. Using Hadoop Streaming, Python MapReduce code extracts common phrases and group documents by them. Overall algorithm design follows that of \cite{Kolak2008}. However, because of a scalability issue, lower bounds and upper bounds limit the output size of the data, and other optimizations are used such as stop word ratio check and preposition trimming. The 3 steps of MapReduce pseudo-code for Meme Extraction is illustrated in the following pseudo codes. The first MapReduce splits the input text into sentences and extract trigrams and their index within the document. The reducer cuts off the common phrases($trigrams$) that appear less than 5 times or more than 300,000 times.
 
 \begin{centering}
 
@@ -250,13 +250,81 @@ for \= ($meme$, [($doc\_id$)]) in [mapper 3 output]:\\
 
 \end{centering}
 
-The final output is key, value pairs of a meme and the list of the document ids that the meme appears.
-
+The final output is key, value pairs of a meme and the list of the document ids that the meme appears. In total, 4,610,100 memes are extracted from the TREC Blogs08 collection.
 
 
 \section{Meme Clustering}
 
-\subsection{Clustering Memes by Distributed Canopy Clustering}
+Since the form of memes evolve over time across different media \cite{Leskovec2009}, similar memes need to be clustered together. For example, ``lipstick look good on a pig," ``lipstick on the pig," and "lipstick on this pig" need to be seen in the same cluster. Canopy clustering algorithm \cite{McCallum2000} is used for this meme clustering. However, since we are clustering more than 4.6 million memes into many clusters of very fine granularity, different strategies should be adopted. Since Canopy is basically a single pass approach, the distance between every meme and every cluster needs to be calculated in $O(n^2)$ computational complexity. Meme clustering task is very different from ordinary document clustering task as the number of documents is extremely high while the length of each document is usually fewer than a dozen of words. We devised following optimizations and modifications to efficiently cluster 4.6 million memes:
+\begin{itemize}
+ \item Binary vector: A vector is simply a set of words in a meme or a centroid. The set operation is O(1) while list operation is O(n). Also word order is ignored by this method.
+ \item Centroid indexing: The centroid is indexed by the words it includes so that when a meme is compared to only with the cluster centroids that include common words.
+ \item New similarity coefficient: Jaccard similarity coefficient 
+\begin{displaymath} 
+ J(A,B) = {{|A \cap B|}\over{|A \cup B|}}
+\end{displaymath} 
+  is inappropriate for meme clustering. We compare a meme with a cluster centroid, and when a cluster centroid is long, short memes cannot have high coefficient scores. Therefore, instead of dividing by the union, we divide the number of common words by the average length of the two vectors:\\
+\begin{displaymath}
+memeSim (A, B) = {{|A \cap B|} \over {(|A|+|B|) / 2} }
+\end{displaymath}
+The similarity score should be higher than 0.6 to be clustered into a given centroid.
+ 
+ \item Stop word removal: The memes should be compared by meaningful words instead of stop words. Otherwise, ``You can put lipstick on a pig'' and ``You can put a book on the table" would be clustered together. Using an extended stop word list that includes month names, week day names, we excluded stop words from the similarity computation. 
+ \item Distributed computation: To cluster 4.6 millions of memes efficiently, mapreduce-based distributed Canopy approach, explained in Apache Mahout Canopy Clustering\footnote{https://cwiki.apache.org/MAHOUT/canopy-clustering.html}, is used. The mapper takes in a partial list of the memes. Using canopy algorithm, it generates cluster centroids. The reducer does the same clustering process with the aggregated centroids. The pseudo code of the MapReduce process is illustrated as follows:
+ 
+
+\begin{centering}
+\begin{tabbing}
+\textbf{Meme-clustering:}\\
+\emph{Mapper:}\\
+
+$CIndex \leftarrow new HashMap$ \# Centroid Index\\
+$C \leftarrow new List$ \# Cluster Centroids\\
+for \= $meme$ in $memes$:\\
+\>	\# Initialize $C$ and $CIndex$\\
+\>	\# 0 is the index of the first cluster\\
+\>	if \= $C$ is empty:\\
+\>\>	\# set() makes a set of words in a meme\\
+\>\>	$C$.append( set(meme) )\\
+\>\>	for \= $word$ in $meme$:\\
+\>\>\>		$CIndex$[$word$].add(0) \\
+\\
+\>	\# Get candidate centroids from $CIndex$\\
+\>	$Candidates \leftarrow new Set()$\\
+\>	for \= $word$ in $meme$:\\
+\>\>		for \= $c$ in $CIndex$[$word$]:\\
+\>\>\>		$Candidates$.add($c$)\\
+\\
+\>	$flag \leftarrow False$\\
+\>	for \= $c$ in $Candidates$:\\
+\>\>	if memeSim($meme$, $C$[$c$])>0.6:\\
+\>\>\>		$C$[$c$]=$C$[$c$] + set($meme$)\\
+\>\>\>	$flag \leftarrow True$\\
+\>\>\>		for \= $word$ in $meme$:\\
+\>\>\>\>		$CIndex$[$word$].add($c$) \\
+\>\>\>		break
+\\
+\> if \= $flag == False$:\\
+\>\>	$C$.append(set($meme$))\\
+\>\>	$c$=len($C$)-1\\
+\>\>		for \= $word$ in $meme$:\\
+\>\>\>		$CIndex$[$word$].add($c$) \\
+emit($C$)\\
+
+\\
+\emph{Reducer:}\\
+\>Reducer is indentical to the mapper except that \\
+\> the input is the centroids($C$) instead of\\
+\> the memes($memes$).\\
+
+\end{tabbing}
+
+\end{centering}
+
+ 
+\end{itemize}
+
+
 
 
 
@@ -285,7 +353,7 @@ which means how similar memes in the cluster are each other.
 Nick's part
 
 \subsection{Automatic Meme Ranking using Support Vector Machine}
-We will use Support Vector Machine for meme ranking. Armed with LIBSVM package, we will learn C-SVM and regard each probability value as the ranking score. For better performance, we should scale feature values and use grid search to find suitable parameters.
+We will use Support Vector Machine for meme ranking. Armed with LIBSVM package\footnote{http://www.csie.ntu.edu.tw/~cjlin/libsvm/}, we will train C-SVM and regard each probability value as the ranking score. For better performance, we should scale feature values and use grid search to find suitable parameters.
 
 \section{Evaluation}
 
