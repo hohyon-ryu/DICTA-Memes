@@ -350,7 +350,7 @@ Ranking the meme clusters based upon their meaningfulness or informativeness as 
   Users will be asked questions such as "Is this a meaningful chunk of information?" and "Is this a common expression that could potentially appear elsewhere?" for approximately 1500 meme clusters.  The composite score of each meme cluster will determine if it is meaningful or not.  Using these labels we will build a training set of memes that can serve as input to the Support Vector Machine for automatic meme ranking.
 
 \subsection{Automatic Meme Ranking using Support Vector Machine}
-We will use Support Vector Machine for meme ranking. Utilizing with LIBSVM package\footnote{http://www.csie.ntu.edu.tw/~cjlin/libsvm/}, we will train C-SVM and regard each probability value as the ranking score. For better performance, we should scale feature values and use grid search to find suitable parameters.
+We will use Support Vector Machine for meme ranking. Utilizing the LIBSVM package\footnote{http://www.csie.ntu.edu.tw/~cjlin/libsvm/}, we will train C-SVM and regard each probability value as the ranking score. For better performance, we should scale feature values and use grid search to find suitable parameters.
 
 
 \section{Evaluation}
