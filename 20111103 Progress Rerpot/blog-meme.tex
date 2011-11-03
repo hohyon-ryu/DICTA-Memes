@@ -312,7 +312,7 @@ emit($C$)\\
 
 \\
 \emph{Reducer:}\\
-\>Reducer is indentical to the mapper except that \\
+\>The reducer is indentical to the mapper except that \\
 \> the input is the centroids($C$) instead of\\
 \> the memes($memes$).\\
 
@@ -324,10 +324,8 @@ emit($C$)\\
 \end{itemize}
 
 
-
-
 \section{Meme Ranking}
-Even though we have successfully clustered memes, we still have many things to do for finding valuable and meaningful information from meme clusters. Basically, we can classify every meme cluster as informative or not because there are many meaningless sequence of words such as ''2 1956 jamboree tues jan 3 1956 jamboree wed,oct 5th wed oct 4 tues``. If we extract some statistical features from meme clusters and build the training data indicating informativeness, we can predict informativeness of each meme cluster. Finally, if we build the model of classifier as regression problem of probability of informativenss given meme cluster, we can bring order into a set of meme clusters with the probability values. Currently, we are expecting the following features as discriminant to decide meme cluster's informativeness.
+Now that we have successfully clustered the memes, we still have many things to do in order to find valuable and meaningful information from the meme clusters. Essentially, we can classify every meme cluster as informative or not because there are many meaningless sequence of words such as ''2 1956 jamboree tues jan 3 1956 jamboree wed,oct 5th wed oct 4 tues``. If we extract some statistical features from meme clusters and build the training data indicating informativeness, we can predict informativeness of each meme cluster. Finally, if we build the model of classifier as a regression problem of probability of informativeness given a meme cluster, we can bring order into a set of meme clusters with the probability values. Currently, we are expecting the following features as discriminant to decide a meme cluster's informativeness.
 \begin{itemize}
  \item the number of memes in the cluster
  \item average meme length
@@ -348,11 +346,11 @@ which means how similar memes in the cluster are each other.
 
 \subsection{Building Training Set at Amazon Mechanical Turk}
 
-Ranking the meme clusters based upon their meaningfulness or informativeness as described above is a difficult and largely subjective task, making it difficult to perform with machine learning.  For this reason, we are implementing an Amazon Mechanical Turk that will ask users to answer a set of basic yes/no questions about sample meme clusters to determine their meaningfulness.   
+Ranking the meme clusters based upon their meaningfulness or informativeness as described above is a difficult and largely subjective task.  Consequently, using machine learning for this task is highly problematic.  Instead, we are implementing an Amazon Mechanical Turk that will ask users to answer a set of basic yes/no questions about sample meme clusters to determine their meaningfulness.
   Users will be asked questions such as "Is this a meaningful chunk of information?" and "Is this a common expression that could potentially appear elsewhere?" for approximately 1500 meme clusters.  The composite score of each meme cluster will determine if it is meaningful or not.  Using these labels we will build a training set of memes that can serve as input to the Support Vector Machine for automatic meme ranking.
 
 \subsection{Automatic Meme Ranking using Support Vector Machine}
-We will use Support Vector Machine for meme ranking. Armed with LIBSVM package\footnote{http://www.csie.ntu.edu.tw/~cjlin/libsvm/}, we will train C-SVM and regard each probability value as the ranking score. For better performance, we should scale feature values and use grid search to find suitable parameters.
+We will use Support Vector Machine for meme ranking. Utilizing with LIBSVM package\footnote{http://www.csie.ntu.edu.tw/~cjlin/libsvm/}, we will train C-SVM and regard each probability value as the ranking score. For better performance, we should scale feature values and use grid search to find suitable parameters.
 
 
 \section{Evaluation}
