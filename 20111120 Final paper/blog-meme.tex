@@ -58,7 +58,7 @@
 \title{Meme Tracking in Scale with MapReduce}% \titlenote{(Produces the permission block, and
 %copyright information). For use with
 %SIG-ALTERNATE.CLS. Supported by ACM.}}
-\subtitle{Project Proposal}
+%\subtitle{Progress Report}
 %\titlenote{A full version of this paper is available as
 %\textit{Author's Guide to Preparing ACM SIG Proceedings Using
 %\LaTeX$2_\epsilon$\ and BibTeX} at
@@ -136,7 +136,7 @@ Nicholas Woodward\\
 \maketitle
 \begin{abstract}
 
-This article is to present our project proposal for Fall 2011 Data-Intensive Computing for Text Analysis class. Using MapReduce-based text processing for keyword extraction, possible applications are discussed. First, using implicit links, sparse links between blog articles that hampers applying information retrieval techniques can be overcome. Second, with Latent Dirichlet Allocation, we may generate a topic model based on extracted keywords. Finally, with the extracted keywords we can visualize blogs and keywords that may help perceive how the blogosphere appears in the big picture.
+This article is to report our project progress for Fall 2011 Data-Intensive Computing for Text Analysis class. We have completed preprocessing of the Blogs08 collection by removing all HTML tags, boilerplate text, non-English documents, and duplicates. After the preprocessing, aproximately 4 million popular common phrases were extracted using an enhanced version of the technique suggested by \cite{Kolak2008}. The extracted phrases are clustered in 2 million meme groups. The meme groups will be ranked automatically using Support Vector Machine, based on the crowdsourced labels obtained from an Amazon Mechanical Turk.
 
 \end{abstract}
 
@@ -151,11 +151,12 @@ This article is to present our project proposal for Fall 2011 Data-Intensive Com
 
 \section{Introduction}
 
-Web logs, also known as blogs, are a very important and interesting source of diverse information. They provide insight into the culture of the society in which they exist. People search blogs to find out how to cook, what to do, what to see, and to discover what others think. Because blogs are typically written in plain language by individuals enthusiastic for their interest, they may be more easily understood than longer, more-detailed news articles and cover a wider personal range of topics. However, unlike web information retrieval, blog information retrieval is still very limited and faces many challenges. Some well-established Web information retrieval techniques do not perform well on blogs because of sparse links, multimedia contents and the short length of the contents \cite{Agarwal}. In particular, PageRank \cite{Brin1998a}, which made a revolutionary improvement by taking into account the link structure of HTML Web documents, does not perform well for blog posts as they lack strong link structure. Another problem for blog information retrieval is the length of the blog posts. They vary from one line to several pages and require smoothing or normalization to achieve effective information retrieval. 
-	In this study, a novel method for augmenting implicit citation links to the explicit HTML links and document expansion for blog posts will be introduced. Extraction of implicit citation links from blog posts will address the sparse link problem that hampers utilizing PageRank and other link-based retrieval algorithms for blog information retrieval. The methodology of extracting implicit citation will utilize Blog content extraction using Decruft\footnote{http://www.minvolai.com/blog/decruft-arc90s-readability-in-python/} and noun chunk extraction based on Python NLTK\footnote{Natural Language Toolkit, http://www.nltk.org/}. By augmenting each document's implicit links, the proposed method tries to improve blog information retrieval. We will also explore other applications that could potentially improve information presentation for the Blogosphere.
+Web logs, also known as blogs, are a very important and interesting source of diverse information. They provide insight into the culture of the society in which they exist. People search blogs to find out how to cook, what to do, what to see, and to discover what others think. Because blogs are typically written in plain language by individuals enthusiastic for their interest, they may be more easily understood than longer, more-detailed news articles and cover a wider personal range of topics. 
+As blogs are highly sensitive to fast-changing temporal issues, finding and tracking memes, pieces of information that travel across blog posts, we can mine variety of issues and fads in the blogosphere. In this project we will extract memes from blogs, cluster them by their similarity, and rank the meme clusters using crowdsourcing-powered machine learning.
 
+\section{Related Work}
 
-\section{Meme Extraction and Analysis}
+\section{Meme Extraction}
 
 \subsection{Test Collection}
 
@@ -163,60 +164,233 @@ BLOGS08\footnote{http://ir.dcs.gla.ac.uk/test\_collections/blogs08info.html} is 
 
 \subsection{Preprocessing Blogs08}
 
-Preprocessing Blogs08 Collection is done using Python with NLTK and Decruft packages. Decruft extracts only meaningful content from a blog page filtering out navigation links, advertisements, sidebar contents, and link to other contents and sites. Using a language identification module, NLTK checks if the extracted content is written in English. Blogs08 also contains a tremendous amount of duplicate documents and documents without significant amount of text. We set a lower-bound of 5 words and remove duplicates, also using Python. After all these preprocess are completed, every extracted content of a blog post is written into a single line per document for the MapReduce meme extraction process.
+Preprocessing of the Blogs08 Collection was completed using Python with NLTK and Decruft packages. Decruft extracts only meaningful content from a blog page, filtering out navigation links, advertisements, sidebar contents, and links to other sites. NLTK uses a language identification module to determine if the extracted content is written in English. Blogs08 also contains a tremendous amount of duplicate documents and documents without a significant amount of text. We set a lower-bound of 5 words and removed duplicates, also using Python. After all these preprocessing steps were completed, extracted contents of a blog post are written into a single line per document for the MapReduce meme extraction process. The number of Decruft-applied, deduplicated, and HTML stripped English blog posts is 15,097,266 (43 GB).
 
-\subsection{Meme Extraction}
+\begin{itemize}
+\item English only
+\item Decruft
+\item Deduplication
+\item HTML Strip
+\end{itemize}
 
-Preprocessed Blogs08 data is comprised of key-value pair where the key is document number(docno) and the value is the preprocessed HTML content of the document. Using Hadoop Streaming, Python MapReduce code extracts candidate phrases and group documents by the common phrases. The mapper first processes input HTML content using BeautifulSoap\footnote{http://www.crummy.com/software/BeautifulSoup/} and strips all HTML tags and JavaScript code. Using NLTK, the mapper tags all the words' part of speech using HUNPOS-tagger\footnote{http://code.google.com/p/hunpos/} and extracts noun phrases, verb phrases, prepositional phrases, and combinations of all these types. The mapper outputs the text key-value pairs where key is a phrase, and the value is docno. The reducer collects all the docnos that share the same phrase and output the phrase and docnos pair. If the number of documents is less than 5, the reducer ignores the phrase.
 
-\subsection{Meme Clustering and Topic Analysis}
-To track mutation and propagation of similar memes, similar memes must be grouped together. For the grouping, we use MapReduce-based clustering. Clustering is the most basic technique to retrieve meaningful information from the corpus. In this project, we will use K-means clustering as the starting point. Because we do not have any prior information of meme distribution, we will apply Canopy clustering \cite{McCallum2000} to choose initial seeds of clustering instead of random seeds selection of K-means clustering. There are two threshold parameters $T_1,T_2,T_1>T_2$ at Canopy clustering. Because this algorithm is pretty fast, we can experiment with various combinations of threshold parameters to get reasonable number of clusters. After K-means clustering with centroids generated by Canopy algorithm, we can start analyzing meme distribution in each cluster and find which memes are releated to each other.
-Cosine distance will be used as the distance measure between two memes. Suppose that document $P,Q$ are represented as two vectors $(P_0, P_1,...,P_n)$ and $(Q_0, Q_1,...,Q_n)$, cosine distance between two documents can be expressed mathematically as the following:
+\subsection{Meme Extraction with MapReduce}
+
+Preprocessed Blogs08 data is comprised of key-value pair where the key is document number(doc\_id) and the value is the preprocessed content of the blog posts. Using Hadoop Streaming, Python MapReduce code extracts common phrases and group documents by them. Overall algorithm design follows that of \cite{Kolak2008}. However, because of a scalability issue, lower bounds and upper bounds limit the output size of the data, and other optimizations are used such as stop word ratio check and preposition trimming. The three steps of MapReduce pseudo-code for Meme Extraction are illustrated in the following pseudo codes. The first MapReduce process splits the input text into sentences and extracts trigrams and their indexes within the document. The reducer removes the common phrases($trigrams$) that appear less than 5 times or more than 300,000 times.
+
+\begin{centering}
+
+\begin{tabbing}
+\textbf{MapReduce 1:}\\
+\emph{Mapper 1:}\\
+
+for \= ($doc\_id$, $text$) in [input file]:\\
+\>	$sentences$  $\leftarrow$ split text by sentence boundary\\
+\\
+\>	for \= $sentence$ in $sentences$:\\
+\>\>	$index$ $\leftarrow$ 0\\
+\>\>	for \= $trigrams$ in $sentence$:\\
+\>\>\>		$index$++	\\
+\>\>\>		emit ($trigrams$, ($doc\_id$, $index$))\\
+\\
+\emph{Reducer 1:}\\
+$lower\_bound$  $\leftarrow$ 5\\
+$upper\_bound$  $\leftarrow$ 300000\\
+for \= ($trigrams$, [($doc\_id$, $index$)]) in [mapper 1 output]:\\
+\>	$len \leftarrow$ count([($doc\_id$, $index$)])\\
+\> 	if \= $lower\_bound$ < $len$ < $upper\_bound$:\\
+\>\>	emit ($trigrams$, [($doc\_id$, $index$)])\\
+\end{tabbing}
+\end{centering}
+
+The second MapReduce process sorts the trigrams and indices by document to concatenate adjacent trigrams in MapReduce 3:
+
+\begin{centering}
+\begin{tabbing}
+\textbf{MapReduce 2:}\\
+\emph{Mapper 2:}\\
+for \= ($trigrams$, [($doc\_id$, $index$)]) in [reducer 1 output]:\\
+\>	for \= ($doc\_id$, $index$) in [($doc\_id$, $index$)]:\\
+\>\> emit ($doc\_id$, ($trigrams$, $index$))\\
+\\
+\emph{Reducer 2:}\\
+for \= ($doc\_id$, [($trigrams$, $index$)]) in [mapper 2 output]:\\
+\>	emit ($doc\_id$, [($trigrams$, $index$)])
+
+\end{tabbing}
+
+\end{centering}
+
+The third MapReduce process concatenates the adjacent trigrams within a blog post. Mapper 3 concatenates adjacent trigrams into a meme. Before emitting the memes, a function trimPrepositions trims off prepositions at the beginning and end of the meme, and a function stopwordRate checks how many of the words in the meme are stop words. If stop words constitute more than 65\% of the words in the meme, the meme is ignored. In the reducer 3, phrases that are too short ($\leqq 5$) or too long ($\geqq 200$) are ignored as they are often timestamps, advertisement, or boiler plate text. The final MapReduce is illustrated as follows:
+
+\begin{centering}
+\begin{tabbing}
+\textbf{MapReduce 3:}\\
+\emph{Mapper 2:}\\
+
+for \= ($doc\_id$, [($trigrams$, $index$)]) in [reducer 2 output]:\\
+\>	$prev\_index=0$\\
+\>	$meme=``"$\\
+\>	for \= ($trigrams$, $index$) in [($trigrams$, $index$)]:\\
+\>\>	if \= $index-prev\_index \leqq 3$:\\
+\>\>\>		$meme$ += $trigrams$[3-($index-prev\_index$):]\\
+\>\>	else:\\
+\>\>\>		$meme$=trimPrepositions($meme$)\\
+\>\>\>		if \= stopwordRate($meme$)<0.65:\\
+\>\>\>\>		emit($meme$, $doc\_id$)\\
+\>\>\>		$meme$=trimPrepositions($meme$)\\
+\>\>\>		$meme$.append($meme$)\\
+\>\>\>		$meme$=$trigram$\\
+\>\>	$prev_index=index$\\
+\\	
+\>	\# clean up for the last one\\
+\>		$meme$ = trimPrepositions ($memes$)\\
+\>		if \= stopwordRate($meme$)<0.65:\\
+\>\>		emit($meme$, $doc\_id$)\\
+\\
+\emph{Reducer 3:}\\
+for \= ($meme$, [($doc\_id$)]) in [mapper 3 output]:\\
+\> if \= $5 \leqq len(meme) \leqq 200$:\\
+\>\>	emit ($meme$, [($doc\_id$)])
+
+\end{tabbing}
+
+\end{centering}
+
+The final output is key, value pairs of a meme and the list of the document ids that the meme appears. In total, 4,610,100 memes are extracted from the TREC Blogs08 collection.
+
+\section{Meme Clustering}
+
+\subsection{Mahout LDA}
+\subsection{Yahoo LDA}
+\subsection{Mahout Canopy}
+\subsection{Indexed MapReduce Canopy}
+   
+Since the form of memes evolve over time across different media \cite{Leskovec2009}, similar memes need to be clustered together. For example, ``lipstick look good on a pig," ``lipstick on the pig," and "lipstick on this pig" need to be seen in the same cluster. A canopy clustering algorithm \cite{McCallum2000} is used for this meme clustering. However, since we are clustering more than 4.6 million memes into many clusters of very fine granularity, different strategies should be adopted. Since Canopy is basically a single pass approach, the distance between every meme and every cluster needs to be calculated in $O(n^2)$ computational complexity. The meme clustering task is very different from an ordinary document clustering task as the number of documents is extremely high while the length of each document is usually fewer than a dozen of words. We devised the following optimizations and modifications to efficiently cluster 4.6 million memes:
+\begin{itemize}
+ \item Binary vector: A vector is simply a set of words in a meme or a centroid. The set operation is O(1) while list operation is O(n). Also word order is ignored by this method.
+ \item Centroid indexing: The centroid is indexed by the words it includes so that when a meme is compared to only with the cluster centroids that include common words.
+ \item New similarity coefficient: Jaccard similarity coefficient 
+\begin{displaymath} 
+ J(A,B) = {{|A \cap B|}\over{|A \cup B|}}
+\end{displaymath} 
+  is inappropriate for meme clustering. We compare a meme with a cluster centroid, and when a cluster centroid is long, short memes cannot have high coefficient scores. Therefore, instead of dividing by the union, we divide the number of common words by the average length of the two vectors:\\
 \begin{displaymath}
-D(P,Q)=1-\frac{\sum(P_i \times Q_i)}{\sqrt{\sum{(P_i)^2} \times \sum{(Q_i)^2}}}
+memeSim (A, B) = {{|A \cap B|} \over {(|A|+|B|) / 2} }
 \end{displaymath}
-For Canopy generation and K-means clustering, Apache Mahout\footnote{http://mahout.apache.org} implementation will be used. 
-Latent Dirichlet Allocation (LDA)\cite{Blei2003} is a generative probabilistic model that can be utilized to detect topics in a document collection. LDA models the document as the random mixture over latent topics, and topic can be represented by a distribution over words. Using LDA, we can create meme mixtures for each topic and topic assignments for memes in each document. We can then group memes with similar topics and analyze several aspects of the data, including topic distrubition over documents and relationshp among topic space. Yahoo! LDA\footnote{https://github.com/shravanmn/Yahoo\_LDA}  implementation will be used. LDA algorithm requires several parameters, of which the most critical is the number of topics that should be specified. This number can be the same as K set with the aforementioned K-means clustering. In order to find the optimal the number of topics we will calculate the perplexity of test collection with the various number of topics. Formally, for a test set of M documents, the perplexity is
+The similarity score should be higher than 0.6 to be clustered into a given centroid.
+ 
+ \item Stop word removal: The memes should be compared by meaningful words instead of stop words. Otherwise, ``You can put lipstick on a pig'' and ``You can put a book on the table" would be clustered together. Using an extended stop word list that includes month names and weekday names, we excluded stop words from the similarity computation. 
+ \item Distributed computation: To cluster 4.6 millions of memes efficiently, mapreduce-based distributed Canopy approach, explained in Apache Mahout Canopy Clustering\footnote{https://cwiki.apache.org/MAHOUT/canopy-clustering.html}, is used. The mapper takes in a partial list of the memes. Using canopy algorithm, it generates cluster centroids. The reducer does the same clustering process with the aggregated centroids. The pseudo code of the MapReduce process is illustrated as follows:
+ 
+
+\begin{centering}
+\begin{tabbing}
+\textbf{Meme-clustering:}\\
+\emph{Mapper:}\\
+
+$CIndex \leftarrow new HashMap$ \# Centroid Index\\
+$C \leftarrow new List$ \# Cluster Centroids\\
+for \= $meme$ in $memes$:\\
+\>	\# Initialize $C$ and $CIndex$\\
+\>	\# 0 is the index of the first cluster\\
+\>	if \= $C$ is empty:\\
+\>\>	\# set() makes a set of words in a meme\\
+\>\>	$C$.append( set(meme) )\\
+\>\>	for \= $word$ in $meme$:\\
+\>\>\>		$CIndex$[$word$].add(0) \\
+\\
+\>	\# Get candidate centroids from $CIndex$\\
+\>	$Candidates \leftarrow new Set()$\\
+\>	for \= $word$ in $meme$:\\
+\>\>		for \= $c$ in $CIndex$[$word$]:\\
+\>\>\>		$Candidates$.add($c$)\\
+\\
+\>	$flag \leftarrow False$\\
+\>	for \= $c$ in $Candidates$:\\
+\>\>	if memeSim($meme$, $C$[$c$])>0.6:\\
+\>\>\>		$C$[$c$]=$C$[$c$] + set($meme$)\\
+\>\>\>	$flag \leftarrow True$\\
+\>\>\>		for \= $word$ in $meme$:\\
+\>\>\>\>		$CIndex$[$word$].add($c$) \\
+\>\>\>		break
+\\
+\> if \= $flag == False$:\\
+\>\>	$C$.append(set($meme$))\\
+\>\>	$c$=len($C$)-1\\
+\>\>		for \= $word$ in $meme$:\\
+\>\>\>		$CIndex$[$word$].add($c$) \\
+emit($C$)\\
+
+\\
+\emph{Reducer:}\\
+\>The reducer is indentical to the mapper except that \\
+\> the input is the centroids($C$) instead of\\
+\> the memes($memes$).\\
+
+\end{tabbing}
+
+\end{centering}
+
+ 
+\end{itemize}
+
+
+\section{Meme Ranking}
+Now that we have successfully clustered the memes, we still have many things to do in order to find valuable and meaningful information from the meme clusters. Essentially, we can classify every meme cluster as informative or not because there are many meaningless sequence of words such as ''2 1956 jamboree tues jan 3 1956 jamboree wed,oct 5th wed oct 4 tues``. If we extract some statistical features from meme clusters and build the training data indicating informativeness, we can predict informativeness of each meme cluster. Finally, if we build the model of classifier as a regression problem of probability of informativeness given a meme cluster, we can bring order into a set of meme clusters with the probability values. Currently, we are expecting the following features as discriminant to decide a meme cluster's informativeness.
+\begin{itemize}
+ \item the number of memes in the cluster
+ \item average meme length
+ \item average number of documents in the cluster
+ \item average number of sources in the cluster
+ \item meme cluster cohesiveness
+ \item time span information of blog documents containing memes in the cluster
+  \begin{itemize}
+    \item the number of days blog documents were written
+    \item the number of documents per day
+  \end{itemize}
+\end{itemize}
+Meme cluster cohesiveness can be defined as 
 \begin{displaymath}
- perplexity(D_{test})=exp\{-\frac{\sum_{d=1}^M log\ p(\mathbf{w}_d)}{\sum_{d=1}^M N_d}\}
+\frac{the\ number\ of\ unique\ words}{the\ number\ of\ words}
 \end{displaymath}
+which means how similar memes in the cluster are each other.
+
+\subsection{Building Training Set at Amazon Mechanical Turk}
+
+Ranking the meme clusters based upon their meaningfulness or informativeness as described above is a difficult and largely subjective task.  Consequently, using machine learning for this task is highly problematic.  Instead, we are implementing an Amazon Mechanical Turk that will ask users to answer a set of basic yes/no questions about sample meme clusters to determine their meaningfulness.
+  Users will be asked questions such as "Is this a meaningful chunk of information?" and "Is this a common expression that could potentially appear elsewhere?" for approximately 1500 meme clusters.  The composite score of each meme cluster will determine if it is meaningful or not.  Using these labels we will build a training set of memes that can serve as input to the Support Vector Machine for automatic meme ranking.
+
+\subsection{Automatic Meme Ranking using Support Vector Machine}
+We will use Support Vector Machine for meme ranking. Utilizing the LIBSVM package\footnote{http://www.csie.ntu.edu.tw/~cjlin/libsvm/}, we will train C-SVM and regard each probability value as the ranking score. For better performance, we should scale feature values and use grid search to find suitable parameters.
 
 
-\section{Application for Extracted Memes}
+\section{Evaluation}
 
-\subsection{Meme Tracking}
+Based on the labels collected with the Amazon Mechanical Turk, the performance on SVM-based ranking will be evaluated.
 
-Previous research has focused on the interaction between blogs and Internet news sites \cite{Leskovec2009}, tracking memes as they pass from one class of websites to the other and potentially back again. Our proposal is to focus on blog to blog interactions, using the metdata provided in Blogs08 to associate blogs with certain memes over time.  We will be able to track memes from their approximate origin as they disseminate out to other blogs, and from this data we can cluster similar blogs into groups based upon their common usage of certain memes. Potential similarity measures include the quantity and frequency of memes that travel between blogs and the lag or time it takes for a meme on one blog to appear on another. We will also examine the blog clusters themselves to observe how their composition changes over time as blogs constantly reference different memes.
-
-\subsection{Information Retrieval Performance Improvement}
-
-The idea of using link structure for information retrieval has been recognized as the key to successful retrieval algorithms since the emergence of Google and its core algorithm, PageRank \cite{Brin1998a}. Another effective approach to utilizing links in information retrieval called HITS was proposed around the same time \cite{Kleinberg1999}.  PageRank and HITS are now the minimum standard of the web information retrieval to assure the quality of retrieved web pages. Unfortunately, these powerful algorithms cannot be fully exploited for blog information retrieval due to lack of strong link structure in the blogosphere. 
-
-With extracted keyphrases using MapReduce and NLTK, we will provide more prior information for a MapReduce-based search engine Ivory\footnote{http://www.umiacs.umd.edu/~jimmylin/ivory/docs/index.html} to improve blog search performance.
+\section{Conclusion}
 
 
-\subsection{Visualization for Users}
-
-There have been many attempts to visualize the blogosphere \cite{Tauro2008, Uchida2007}. However, they were insufficient in helping users with better navigation. Using the visualization techniques integrated into the navigation system, we would be able to benefit actual users by improving the process of finding blog articles, thus allowthing them to more easily navigate between related articles.
-
-\section{Project Plan}
+\section{Logistics}
 
 \subsection{Division of Work}
 
 \begin{itemize}
-\item Hohyon Ryu: Meme Extraction, Meme Tracking
-\item Jae Hyeon Bae: Clustering Memes, Scalability Issues
-\item Nicholas Woodward: Theoretical Background, Meme Tracking, Practical Application
+\item Hohyon Ryu: Data Preprocessing, Meme Extraction, Meme Clustering
+\item Jae Hyeon Bae: Theoretical Background, SVM-based Meme Ranking
+\item Nicholas Woodward: Theoretical Background, Crowdsourcing the meme cluster evaluation, Mock-up Webpage Build
 \end{itemize}
+
 \subsection{Timeline}
 
 
 \begin{itemize}
-  \item Oct/6: Preprocessing
-  \item Oct/13: Meme Extraction
-  \item Oct/20 \& 27: Meme Clustering
-  \item Nov/3 \& 10: Meme Tracking and Application
-  \item Nov/10: Presentation Webpage Buildup
+  \item Oct/6: Preprocessing - Done
+  \item Oct/13: Meme Extraction - Done
+  \item Oct/20 \& 27: Meme Clustering - Done
+  \item Nov/3 \& 10: Crowdsourcing 
+  \item Nov/10: SVM-based Meme Cluster Ranking
   \item Nov/17: Finalizing Paper
   \item Dec/1: Presentation
 \end{itemize}
