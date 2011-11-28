@@ -273,10 +273,7 @@ Apache Mahout\footnote{http://mahout.apache.org} is the open source scalable mac
 \subsubsection{Defect 1: Parameter estimation}
 The first defect is it does not estimate parameters with variational Expectation Maximization (EM). In variational inference algorithm, Dirichlet parameters $\alpha, \beta$ should be estimated to maximize likelihood of $p(\mathbf{w}|\alpha,\beta)$. Since a likelihood also is not tractable for computation, variational EM method should be used, which is to maximize the lower bound of a likelihood value. But this implementation does not esitamate parameters and uses a fixed value submitted by user as a $\alpha$ and log probability of a word given a topic as $\beta_{iw_n}$. We asked to the author of this implementation about effects of parameter estimation, he answered that it would not affect much for basic working of LDA. If we increase a topic smoothing parameter, it increases the effect of words that occur infrequently.
 
-\subsubsection{Defect 2: Final output}
-The final output of LDA implementation is only the probability of a word given a topic, $p(w|k)$. We need to generates gamma file including document $\times$ topic matrix, which is variational posterior Dirhcilet distrubition. This result is necessary to infer the topic distribution for unseen documents using learned topic model.
-
-\subsubsection{Convergence}
+\subsubsection{Defect 2: Convergence}
 The original algorithm proposed EM method to iterate until the lower bound of log likelihood value converges. E step is inference, and M step is maximizing lower bound of the log likelihood regarding the model parameters $\alpha, \beta$ using variational parameters obtained from E step. Mahout implementation does not execute M step and only repeats E step using previous calculated log probability of a word given a topic.
 
 \subsection{Yahoo! LDA}
@@ -482,7 +479,7 @@ instant messaging systems,messaging systems\\
 emil blonsky,soldier emil blonsky\\
 diner dash 2,diner dash 1.106850\\
 \hline
-\end{tabluar}
+\end{tabular}
 \caption{Top 20 memes by SVR}
 \label{table:svr_result}
 \end{center}
