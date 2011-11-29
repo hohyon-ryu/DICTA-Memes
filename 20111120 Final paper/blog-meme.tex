@@ -361,7 +361,7 @@ emit($C$)\\
 
 
 \section{Meme Ranking}
-Now that we have successfully clustered the memes, we still have many things to do in order to find valuable and meaningful information from the meme clusters. Essentially, we can classify every meme cluster as informative or not because there are many meaningless sequence of words such as ''2 1956 jamboree tues jan 3 1956 jamboree wed,oct 5th wed oct 4 tues``. If we extract some statistical features from meme clusters and build the training data indicating informativeness, we can predict informativeness of each meme cluster. Finally, if we build the model of classifier as a regression problem of probability of informativeness given a meme cluster, we can bring order into a set of meme clusters with the probability values. Currently, we are expecting the following features as discriminant to decide a meme cluster's informativeness.
+Now that we have successfully clustered the memes, the task remains to classify them according to a meaningfulness or informativeness ranking. Though classification is a challenge, many of the meme clusters can easily be classified as meaningless because they contain sequences of words such as “2 1956 jamboree tues jan 3 1956 jamboree wed,oct 5th wed oct 4 tues” to do not form a coherent idea. If we extract some statistical features from meme clusters and build the training data indicating informativeness, we can predict informativeness of each meme cluster. Finally, if we build the model of classifier as a regression problem of probability of informativeness given a meme cluster, we can bring order into a set of meme clusters with the probability values. Currently, we are expecting the following features as discriminant to decide a meme cluster's informativeness.
 \begin{itemize}
  \item the number of memes in the cluster
  \item average meme length
@@ -380,17 +380,15 @@ Meme cluster cohesiveness can be defined as
 \end{displaymath}
 which means how similar memes in the cluster are each other.
 
-\subsection{Building Training Set at Amazon Mechanical Turk}
+\subsection{Building Training Set with Amazon Mechanical Turk}
 
-Ranking the meme clusters based upon their meaningfulness or informativeness as described above is a difficult and largely subjective task.  Consequently, using machine learning for this task is highly problematic.  Instead, we are implementing an Amazon Mechanical Turk that will ask users to answer a set of basic yes/no questions about sample meme clusters to determine their meaningfulness.
-  Users will be asked questions such as "Is this a meaningful chunk of information?" and "Is this a common expression that could potentially appear elsewhere?" for approximately 1500 meme clusters.  The composite score of each meme cluster will determine if it is meaningful or not.  Using these labels we will build a training set of memes that can serve as input to the Support Vector Machine for automatic meme ranking.
-
-\subsection{Automatic Meme Ranking using Support Vector Machine}
-In training data, each meme cluster contains several scores by different evaluators. We remove the highest and lowest scores for each meme cluster to remove evaluator's biases. Then we calculate the mean score and normalize to 0-1 scale. This score will be the target value of ranking.
+Ranking the meme clusters based upon their meaningfulness or informativeness as described above is a difficult and largely subjective task. Consequently, using machine learning for this task is highly problematic. To aid the process of automated classification of the phrase clusters, we implemented an Amazon Mechanical Turk (MTurk) to utilize human intelligence in building a training set \cite{Barr&Cabrera2006}. MTurk is an Internet service for scalable crowdsourcing of simple one-time tasks. It allows \emph{requesters} submit human intelligence tasks (HITs) to be completed by \emph{workers} in exchange for small payments. Requesters approve the results they consider satisfactory, and workers increase their confidence scores with high approval rates.
+   In our study, we displayed to the user a cluster of phrases and three 100-word snippets of text from the blog data in which the phrases appear, along with seven questions, or HITs, related to the meaningfulness of the phrases. Questions ranged from "Is this a meaningful chunk of information?" to "Is this a common expression that could potentially appear elsewhere?"  In total, we submitted 1090 meme clusters to MTurk with seven HITs each. Workers were required to have a HIT approval rate greater than 85\% and to have completed at least 50 approved HITs.
+  All meme clusters were reviewed by three workers to allow for varying subjective assessments.  After removing the highest and lowest total scores to eliminate any individual biases, we calculated the mean score of the cluster and normalized on a 0-1 scale. Each meme cluster was then compared to a range of threshold values for the purposes of the Support Vector Machine, as described in the following section.
 
 \subsubsection{Classification using Support Vector Machine}
-As a result of mechanical turnk, we get 1090 training instances. The first method for meme ranking is classification using Support Vector Machine. We classify meme clusters in the training set as positive or negative with the score threshold and then we calculate the probability that meme cluster in the test set is classfied as the positive set. If we sort meme clusters in the test set by the probability value, we can find significant meme clusters. We utilize the LIBSVM package\footnote{http://www.csie.ntu.edu.tw/~cjlin/libsvm/} for the experiment.
-First of all, we have to find the threshold value to classify training instance as positive or negative. If the score is less than the treshold value, its class is negative otherwise positive. When we naively choose the threshold value as 0.5, our training data contains only 10\% negative data and the trained model with this data predicts only 2 negative examples for the training data. So, we find the best threshold value which can balance between ratio of positive/negative data and prediction accuracy. Table \ref{table:svm} is showing the result for various threshold values. We use the tool included LIBSVM package to find the best parameters and feature scale.
+As a result of the Mechanical Turk, we used 1090 meme clusters for training purposes. The first method for meme ranking is classification using Support Vector Machine. Meme clusters in the training set were classified as positive or negative with the score threshold, and then we calculated the probability that a meme cluster in the training set is classified as the positive set. Sorting the meme clusters in the training set by the probability value allows us to find the most significant meme clusters. To do this we utilized the LIBSVM package\footnote{http://www.csie.ntu.edu.tw/~cjlin/libsvm/.
+   Our first task was to find the best threshold value to classify meme clusters in the training set as positive or negative. If a cluster's score is less than the threshold value then its class is negative.  Otherwise it is defined as positive. When we naively chose the threshold value as 0.5, our training data contained only 10\% negative data.   The trained model with this data predicted only 2 negative examples for the training set. As a result, we attempted several threshold values that could proved the best ratio of positive/negative data and prediction accuracy. Table \ref{table:svm} shows the results for several threshold values. We used the tool included LIBSVM package to find the best parameters and feature scale.
 
 \begin{table*}[h!b!p!]
 \begin{center}
@@ -410,7 +408,7 @@ threshold&No. of negative instances in training data&No. of negative instances p
 \end{center}
 \end{table*}
 
-As we can see from Table \ref{table:svm}, threshold value 0.75 looks the best and other threshold value cannot learn to classify negative examples or positive examples at all. Armed with 0.75 as our threshold value, we calculated the probability of positive classification for each meme cluster and sort. Table \ref{table:svm_result} is showing the top 20 memes.
+As we can see from Table \ref{table:svm}, the threshold value 0.75 appears to most adequately suit our needs, while the other values were unable to classify meme clusters as positive or negative. Using a threshold value of  0.75, we calculated the probability of positive classification for each meme cluster and then sorted the results. Table \ref{table:svm_result} shows the top 20 meme clusters.
 
 \begin{table*}[h!b!p!]
 \begin{center}
@@ -437,19 +435,19 @@ entitles him,entitles the holder,entitles them,entitles you\\
 intimidate and terrorize,terrorize the,terrorize them,to terrorize\\
 \hline
 \end{tabular}
-\caption{Top 20 memes by classificatioin probability}
+\caption{Top 20 memes by classification probability}
 \label{table:svm_result}
 \end{center}
 \end{table*}
 
-From the result, we can catch several keywords but it looks not so informative. When we search ''lipstick on the pig`` from the result, probability values of meme clusters containinig ''lipstick on the pig`` were all less than 0.5, which means these were all non-informative memes. We can analyze causes as the following:
+Looking closer at the results, it is apparent that our approach is able to recognize several keywords or phrases in the meme clusters.  But this does not necessarily imply that those clusters are meaningful or informative in the same way as popular phrases that achieve critical mass. For example, if  we search for known memes such as  “lipstick on a pig” in the blog data the probability values of meme clusters containing this phrase are all less than 0.5, implying they are not meaningful or relevant. There are several potential causes for our results, including:
 \begin{itemize}
  \item Errorneous feature engineering
  \item Reliability of Amazon Mechanical Turk training set
  \item Wrong approach of ranking
 \end{itemize}
 
-Because evaluating feature engineering and training set is not easy, we try to rank meme clusters using regression methid.
+Because evaluating feature engineering and training set is not easy, we try to rank meme clusters using regression method.
 
 \subsubsection{Ranking with Support Vector Regression}
 Regression is estimating the target value based on feature values. Instead of estimatimg probability of meme cluster to be informative, if we calculate scores using Support Vector Regression (SVR), we can get informative meme clusters. We used $\epsilon$-SVR. Root Mean Square Error (RMSE) value for training set is 0.0171578, reasonable value. Table \ref{table:svr_result} is showing top 20 memes sorted by regression values.
