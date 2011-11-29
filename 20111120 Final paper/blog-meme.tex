@@ -529,6 +529,8 @@ i think these are the true candidates for immortality\\
 \end{center}
 \end{table*}
 
+Our original plan was training comparator with a binary classifier using Support Vector Machine. With the same training data described above, we can train the binary classifier for two instances. If we have two instances A, B, if A is better than B, the classifier has to return the label 1 for feature values of difference between A and B, otherwise -1. Armed with the accurate classifier, we can sort memes using the classifier as the comparator. But the problem was accuracy of classification. Training accuracy was slightly better than random, 59\%. The comparator has to return different labels for the difference from A to B and vice versa, but there are many cases the classifier is returning the same labels for each difference. With this inaccurate comparator, we cannot use this approach.
+
 \section{Evaluation}
 
 Based on the labels collected with the Amazon Mechanical Turk, the performance on SVM-based ranking will be evaluated.
