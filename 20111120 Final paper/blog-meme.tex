@@ -286,7 +286,7 @@ Due to above major drabacks of Mahout LDA implementation, we decided to use Yaho
 We could resolve first two problems by fixing some lines of script files but we could not resolve the last problem. According to the late response of Yahoo! LDA author, lost connection problem is caused by Hadoop. Yahoo! LDA supports checkpointing and restart mechanism but when we restarted it, it started from the first iteration of LDA. The main difficulty was the large scale of meme collection and many iterations were needed for gaining meaningful topic collection. One iteration took average 7 minutes with a single machine and took average 1.5 minutes with 5 machines. Default number of iterations of Yahoo! LDA implementation is 1,000.
 
 \subsection{Mahout Canopy Clustering}
-If we can represent our data as a vector, the most common and efficient clustering algorithm is $K$-means clustering. The main drawbacks of $k$-means clustering is that we have to specify the number of cluster $k$, a priori information of data distribution and $k$-means clustering is very sensitive to initial seed clusters. Thus, there are many suggestions that we can estimate suitable number of clusters and initial seed clusters using canopy clustering \cite{McCallum2000} because canopy clustering is generating clusters totally based on distance measure. Because Apache Mahout contains canopy clustering implementation, we implemented Jacadi distance measure to Apache Mahout interface and executed Mahout canopy clustering with some parameters. Canopy clustering receives 2 distance parameters $t_1, t_2$ such that $t_1 > t_2$. It starts with empty canopy list. If the distance between the vector and the canopy in the canopy list is less than $t_1$, the vector is added to the canopy. The distance from the canopy is the distance from the centroid of vectors in the canopy. If there is no canopy whose distance is less than $t_2$, which means the point is not strongly bounded for canopies, the new canopy is created with the point. This is repeated for every point.
+If we can represent our data as a vector, the most common and efficient clustering algorithm is $k$-means clustering. The main drawbacks of $k$-means clustering is that we have to specify the number of cluster $k$, a priori information of data distribution and $k$-means clustering is very sensitive to initial seed clusters. Thus, there are many suggestions that we can estimate suitable number of clusters and initial seed clusters using canopy clustering \cite{McCallum2000} because canopy clustering is generating clusters totally based on distance measure. Because Apache Mahout contains canopy clustering implementation, we implemented Jacadi distance measure to Apache Mahout interface and executed Mahout canopy clustering with some parameters. Canopy clustering receives 2 distance parameters $t_1, t_2$ such that $t_1 > t_2$. It starts with empty canopy list. If the distance between the vector and the canopy in the canopy list is less than $t_1$, the vector is added to the canopy. The distance from the canopy is the distance from the centroid of vectors in the canopy. If there is no canopy whose distance is less than $t_2$, which means the point is not strongly bounded for canopies, the new canopy is created with the point. This is repeated for every point.
 We have more than 4 million memes and they are highly sparse. Without any tuning of canopy clustering algorithm, even though we specify very generous parameters for $t_1,t_2$, we would have more than million canopies it caused out of memory error while running on Hadoop MapReduce. Also, since its time complexity is near $O(N^2)$ with many canopies, we could not use the original canopy clustering implementation. After these trials and errors, we decided to develop Indexed MapReduce Canopy.
 
 \subsection{Indexed MapReduce Canopy}
@@ -387,8 +387,7 @@ Ranking the meme clusters based upon their meaningfulness or informativeness as 
   All meme clusters were reviewed by three workers to allow for varying subjective assessments.  After removing the highest and lowest total scores to eliminate any individual biases, we calculated the mean score of the cluster and normalized on a 0-1 scale. Each meme cluster was then compared to a range of threshold values for the purposes of the Support Vector Machine, as described in the following section.
 
 \subsubsection{Classification using Support Vector Machine}
-As a result of the Mechanical Turk, we used 1090 meme clusters for training purposes. The first method for meme ranking is classification using Support Vector Machine. Meme clusters in the training set were classified as positive or negative with the score threshold, and then we calculated the probability that a meme cluster in the training set is classified as the positive set. Sorting the meme clusters in the training set by the probability value allows us to find the most significant meme clusters. To do this we utilized the LIBSVM package\footnote{http://www.csie.ntu.edu.tw/~cjlin/libsvm/.
-   Our first task was to find the best threshold value to classify meme clusters in the training set as positive or negative. If a cluster's score is less than the threshold value then its class is negative.  Otherwise it is defined as positive. When we naively chose the threshold value as 0.5, our training data contained only 10\% negative data.   The trained model with this data predicted only 2 negative examples for the training set. As a result, we attempted several threshold values that could proved the best ratio of positive/negative data and prediction accuracy. Table \ref{table:svm} shows the results for several threshold values. We used the tool included LIBSVM package to find the best parameters and feature scale.
+As a result of the Mechanical Turk, we used 1090 meme clusters for training purposes. The first method for meme ranking is classification using Support Vector Machine. Meme clusters in the training set were classified as positive or negative with the score threshold, and then we calculated the probability that a meme cluster in the training set is classified as the positive set. Sorting the meme clusters in the training set by the probability value allows us to find the most significant meme clusters. To do this we utilized the LIBSVM package\footnote{http://www.csie.ntu.edu.tw/~cjlin/libsvm/}. Our first task was to find the best threshold value to classify meme clusters in the training set as positive or negative. If a cluster's score is less than the threshold value then its class is negative.  Otherwise it is defined as positive. When we naively chose the threshold value as 0.5, our training data contained only 10\% negative data.   The trained model with this data predicted only 2 negative examples for the training set. As a result, we attempted several threshold values that could proved the best ratio of positive/negative data and prediction accuracy. Table \ref{table:svm} shows the results for several threshold values. We used the tool included LIBSVM package to find the best parameters and feature scale.
 
 \begin{table*}[h!b!p!]
 \begin{center}
@@ -486,7 +485,49 @@ diner dash 2,diner dash 1.106850\\
 Unfortunately, this result does not look so informative either.
 
 \subsubsection{Ranking with Pairwise comparision}
-As the last ranking approach, we use pairwise comparision, as known as Bradley-Terry model. 
+As the last ranking approach, we use pairwise comparision, as known as Bradley-Terry model \cite{Bradley1952}. The model can be formulated by the following logit-linear form:
+\begin{displaymath}
+ logit[(P(i\ beats\ j)]=\lambda_i - \lambda_j
+\end{displaymath}
+where $\lambda_i=log\alpha_i$ for all $i$. If we assume all comparisons are independent each other, we can estimate $\lambda_i$ value with maximum likelihood estimate using generalized linear model. To train Bradley-Terry model, we make the pairwise comparision training data from Amazon Mechanical Turk data. For each pair A, B, we will have 2 training instances. If evaluator decides A is better than B, for the first instance, a class label is 1 and features are difference of feature values from A to B. For another instance, a class label is -1 and features are difference from B to A. Using these training data, we learn weights of features using logistic regression. In this case, bias should be always 0 because there are same number of instances in each class -1 and 1. Armed with weights learned with this model, we can calculate the score of each meme as a weighted sum of feature values. To remove Table \ref{table:bt_result} is showing the result, which looks much better than previous results. For smoothing too much differences between feature values, we applied $log$ function to the following features:
+\begin{itemize}
+ \item the number of memes in the cluster
+ \item average meme length
+ \item average number of documents in the cluster
+ \item average number of sources in the cluster
+ \item the number of days blog documents were written
+\end{itemize}
+
+\begin{table*}[h!b!p!]
+\begin{center}
+\begin{tabular}{|p{15cm}|}
+\hline
+they instruct the computer\\
+ground of disfavored victimized by god\\
+or other highly technological systems within their power\\
+gods hate these\\
+you grow and age it can create birth defects affect cellular development\\
+asians into the united\\
+expect etruscan strongholds\\
+disfavored cities and the southern\\
+a process of masculinization\\
+the mediterreanean region is grossly disfavored\\
+greed generate problems with money glorify overconsumption etc\\
+1492 exodus from spain spain became evil financed columbus initiated missionaries usa\\
+centuries ago ruled with an iron fist\\
+italian food creates fat people with stomach\\
+be those whom traditionally maintained this type\\
+gibralter broke through inundating the basin and killing untold\\
+rich cultures helped the people understand and pursue lives\\
+historical pattern and you will suffer for exploiting the\\
+disfavored girls\\
+i think these are the true candidates for immortality\\
+\hline
+\end{tabular}
+\caption{Top 20 memes by Bradley-Terry model}
+\label{table:bt_result}
+\end{center}
+\end{table*}
 
 \section{Evaluation}
 
