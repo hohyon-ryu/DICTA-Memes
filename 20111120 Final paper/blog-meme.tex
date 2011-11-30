@@ -294,15 +294,39 @@ Since the form of memes evolve over time across different media \cite{Leskovec20
 \begin{itemize}
  \item Binary vector: A vector is simply a set of words in a meme or a centroid. The set operation is O(1) while list operation is O(n). Also word order is ignored by this method.
  \item Centroid indexing: The centroid is indexed by the words it includes so that when a meme is compared to only with the cluster centroids that include common words.
- \item New similarity coefficient: Jaccard similarity coefficient 
+ \item New similarity coefficient: RBS similarity coefficient
+ Jaccard's similarity coefficient 
 \begin{displaymath} 
  J(A,B) = {{|A \cap B|}\over{|A \cup B|}}
 \end{displaymath} 
-  is inappropriate for meme clustering. We compare a meme with a cluster centroid, and when a cluster centroid is long, short memes cannot have high coefficient scores. Therefore, instead of dividing by the union, we divide the number of common words by the average length of the two vectors:\\
+  is not very suitable for our meme clustering as it is highly sensitive to the length difference between memes. We compare a meme with a cluster centroids, and when a cluster centroid is long, short memes cannot have high coefficient score and get assigned into any cluster. Therefore, we used a new coefficient named RBW coefficient. Instead of dividing by the union, we divide the number of common words by the average length of the two vectors to relieve the sensitivity:\\
 \begin{displaymath}
-memeSim (A, B) = {{|A \cap B|} \over {(|A|+|B|) / 2} }
+RBW(A, B) = {{|A \cap B|} \over {(|A|+|B|) / 2} }
 \end{displaymath}
-The similarity score should be higher than 0.6 to be clustered into a given centroid.
+
+Table \ref{table:sim} shows that Jaccardi's coefficient is much more sensitive to the length difference between a meme and a centroid. By dampening the sensitivity to the length difference, RBW coefficient is more sensitive to the intersection. 
+
+\begin{table}[h!t!]
+\begin{center}
+\begin{tabular}{p{3.0cm}|p{2.2cm}|r|r}
+\hline
+Meme&Centroid&Jaccardi&RBW\\
+\hline
+weapons of mass destruction programs&&1.00&1.00\\
+\hline
+iraqs weapons of mass destruction & weapons mass destruction programs&0.60&0.75\\
+\hline
+fear of weapons of mass destruction & weapons mass destruction programs iraq&0.43&0.60\\
+\hline
+weapons of mass destruction and ballistic missiles&weapons mass destruction programs iraq fear&0.37&0.50\\
+\hline
+\end{tabular}
+\caption{Comparison between Jaccardi's coefficient and the proposed RBW coefficient. Jaccardi's coefficient drops quickly as the centroid gets longer. On the other hand RBW coefficient is less sensitive to the length difference and more sensitive of the intersection.}
+\label{table:sim}
+\end{center}
+\end{table}
+
+#The similarity score should be higher than 0.6 to be clustered into a given centroid.
  
  \item Stop word removal: The memes should be compared by meaningful words instead of stop words. Otherwise, ``You can put lipstick on a pig'' and ``You can put a book on the table" would be clustered together. Using an extended stop word list that includes month names and weekday names, we excluded stop words from the similarity computation. 
  \item Distributed computation: To cluster 4.6 millions of memes efficiently, mapreduce-based distributed Canopy approach, explained in Apache Mahout Canopy Clustering\footnote{https://cwiki.apache.org/MAHOUT/canopy-clustering.html}, is used. The mapper takes in a partial list of the memes. Using canopy algorithm, it generates cluster centroids. The reducer does the same clustering process with the aggregated centroids. The pseudo code of the MapReduce process is illustrated as follows:
