@@ -1,0 +1,12 @@
+#Spell Correction Py
+
+import sys
+import operator
+import re
+
+for line in sys.stdin:
+	data=line.lower().strip().split("\t")
+	title=data[0]
+	words=re.findall("\w+", data[1])
+	print words
+

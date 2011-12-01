@@ -1,0 +1,88 @@
+#deduplicate!
+import glob
+import re
+import pickle
+import sys
+
+dedup_folder="../../data/2_deduplicated/"+sys.argv[1]+"/*"
+
+dedup_files=glob.glob(dedup_folder)
+dedup_files.sort()
+
+def getContent(line):
+  data=line.strip()
+
+  reg=re.search('<DOCNO>(.*?)</DOCNO>', data)
+  docno=reg.group(1)
+
+  reg=re.search('<DOC>(.*?)</DOC>', data)
+  doc=reg.group(1)
+  text=re.sub('<[^<]+?>', ' ', doc)
+
+  vec=text.split(" ")
+
+  vecSet=set()
+  for word in vec:
+    vecSet.add(word[:4].lower())
+    #try:
+    #  vecDic[word]+=1
+    #except:
+    #  vecDic[word]=1
+
+  return docno, vecSet
+
+def compareDocs(vec1, vec2):
+  compDic={}
+
+  same=len(vec2 & vec1)
+  
+  return float(same)/max(len(vec1), len(vec2))
+   
+
+AllDocs={}
+
+#print "Loading all the docs (first 1000 chars) to Memory. Crazy, huh?"
+
+for dedup_file in dedup_files: 
+  print dedup_file
+  for line in open(dedup_file):
+    docno, doc=getContent(line)
+    AllDocs[docno]=doc
+  #break
+
+docno_to_del=set()
+i=0
+for docno, doc in AllDocs.items():
+  i+=1
+  for docno2, doc2 in AllDocs.items():
+    if (docno!=docno2):
+      score=compareDocs(doc, doc2)
+
+      if score>0.85:
+        #print docno, docno2
+        #print sorted(doc)
+        #print sorted(doc2)
+        #print score
+        docno_to_del.add(docno2)
+        del AllDocs[docno2]
+  if i%100==0:  
+    print sys.argv[1], i, "/", (len(AllDocs)+len(docno_to_del)) , len(AllDocs), len(docno_to_del)
+
+print docno_to_del
+
+pickleFileName = "delsets/"+sys.argv[1]+".delset"
+pickleFile = open(pickleFileName, 'w')
+pickleFile.write(str(docno_to_del))
+#pickle.dump(docno_to_del, pickleFile, pickle.HIGHEST_PROTOCOL)
+pickleFile.close()
+  
+"""
+pickleFileName = "docno_to_del.pickle"
+pickleFile = open(pickleFileName, 'rb')
+data = pickle.load(pickleFile)
+pickleFile.close()
+"""
+
+
+
+

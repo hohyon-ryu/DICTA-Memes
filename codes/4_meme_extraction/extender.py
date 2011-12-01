@@ -1,0 +1,55 @@
+#!/usr/bin/env python
+
+#Extender
+
+import sys
+import operator
+import re
+
+prev_phrase=""
+output=[]
+
+
+
+for line in sys.stdin:
+	data=line.strip().split("\t")
+	current_title=data[0]
+	#print "-----",current_title
+
+	memes=data[1].split("/")
+
+	meme_index_dic={}	
+	index_list=[]
+	for meme in memes:
+		meme_split=meme.split("=")
+
+		meme_trigram=meme_split[0]
+		meme_indexes=meme_split[1].split("|")
+		for meme_index in meme_indexes:
+			title,index =meme_index.split(",")
+			if title==current_title:
+				index_list.append(int(index))
+				tri=meme_trigram.split(" ")
+				meme_index_dic[int(index)]=tri
+
+	index_list.sort()
+	cnt=0
+	current_output=[]
+	for i in index_list:
+
+		if cnt>0:
+			#print index_list[cnt-1]
+			if i-index_list[cnt-1]<=3:
+				current_output=meme_index_dic[index_list[cnt-1]]
+				current_output.extend(meme_index_dic[i][3-(i-index_list[cnt-1]):])
+			
+			else:
+				if len(current_output)>0:
+					print " ".join(current_output)+"\t"+current_title
+				current_output=[]
+
+		cnt+=1
+	if len(current_output)>0:
+		print " ".join(current_output)+"\t"+current_title
+
+				

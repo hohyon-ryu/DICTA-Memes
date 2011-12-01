@@ -1,0 +1,53 @@
+#!/usr/bin/env python
+
+#Mapper 1
+
+import sys
+import operator
+import re
+
+
+def checkStopwords(wordlist=[]):
+	stopwords=set(["a","the", "of","in","on","january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december", "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec","am", "pm"] )
+
+	stopcnt=0.0
+	for word in wordlist:
+		if word in stopwords:
+			stopcnt+=1
+		elif word.isdigit():
+			stopcnt+=1
+
+	return stopcnt/len(wordlist)
+
+def my_split(s, seps):
+  res = [s]
+  for sep in seps:
+    s, res = res, []
+    for seq in s:
+      res += seq.split(sep)
+  return res
+
+
+for line in sys.stdin:
+	data=line.strip().split("\t")
+	#words=re.findall("\w+", data[0])
+	#title="_".join(words)
+	if len(data)!=3:
+		continue
+	title=data[0]
+	
+	content=data[2].lower()
+	sentences=my_split(content, ["." , "?" , "!" , "  ", ":", "\n", "(", ")", "\""] )
+	overall=0
+
+	for sentence in sentences:
+		words=re.findall("[\w\']+", sentence)
+		i=0
+		for word in words:
+			if i>=2:
+				#print words[i-2:i+1]
+				if (checkStopwords(words[i-2:i+1])<1):
+					print words[i-2]+" "+words[i-1]+" "+word+"\t"+title+","+str(overall-2)
+			i+=1
+			overall+=1
+
