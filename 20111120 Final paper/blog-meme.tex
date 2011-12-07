@@ -409,7 +409,7 @@ which means how similar memes in the cluster are each other.
 
 \subsection{Building Training Set with Amazon Mechanical Turk}
 
-Ranking the meme clusters based upon their meaningfulness or informativeness as described above is a difficult and largely subjective task. Consequently, using machine learning for this task is highly problematic. To aid the process of automated classification of the phrase clusters, we implemented an Amazon Mechanical Turk (MTurk) to utilize human intelligence in building a training set \cite{Barr&Cabrera2006}. MTurk is an Internet service for scalable crowdsourcing of simple one-time tasks. It allows \emph{requesters} submit human intelligence tasks (HITs) to be completed by \emph{workers} in exchange for small payments. Requesters approve the results they consider satisfactory, and workers increase their confidence scores with high approval rates.
+Ranking the meme clusters based upon their meaningfulness or informativeness as described above is a difficult and largely subjective task. Consequently, using machine learning for this task is highly problematic. To aid the process of automated classification of the phrase clusters, we implemented an Amazon Mechanical Turk (MTurk) to utilize human intelligence in building a training set \cite{Barr2006}. MTurk is an Internet service for scalable crowdsourcing of simple one-time tasks. It allows \emph{requesters} submit human intelligence tasks (HITs) to be completed by \emph{workers} in exchange for small payments. Requesters approve the results they consider satisfactory, and workers increase their confidence scores with high approval rates.
    In our study, we displayed to the user a cluster of phrases and three 100-word snippets of text from the blog data in which the phrases appear, along with seven questions, or HITs, related to the meaningfulness of the phrases. Questions ranged from "Is this a meaningful chunk of information?" to "Is this a common expression that could potentially appear elsewhere?"  In total, we submitted 1090 meme clusters to MTurk with seven HITs each. Workers were required to have a HIT approval rate greater than 85\% and to have completed at least 50 approved HITs.
   All meme clusters were reviewed by three workers to allow for varying subjective assessments.  After removing the highest and lowest total scores to eliminate any individual biases, we calculated the mean score of the cluster and normalized on a 0-1 scale. Each meme cluster was then compared to a range of threshold values for the purposes of the Support Vector Machine, as described in the following section.
 
@@ -515,7 +515,7 @@ diner dash 2,diner dash 1.106850\\
 Unfortunately, this result does not look so informative either.
 
 \subsubsection{Ranking with Pairwise Comparison}
-In the final ranking approach we used a pairwise comparison, known as the Bradley-Terry model \cite{Bradley&Terry1952}. The model can be formulated by the following logit-linear form:
+In the final ranking approach we used a pairwise comparison, known as the Bradley-Terry model \cite{Bradley1952}. The model can be formulated by the following logit-linear form:
 \begin{displaymath}
  logit[(P(i\ beats\ j)]=\lambda_i - \lambda_j
 \end{displaymath}
