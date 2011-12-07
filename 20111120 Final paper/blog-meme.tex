@@ -128,7 +128,7 @@ Nicholas Woodward\\
 %\additionalauthors{Additional authors: John Smith (The Th{\o}rv{\"a}ld Group,
 %email: {\texttt{jsmith@affiliation.org}}) and Julius P.~Kumquat
 %(The Kumquat Consortium, email: {\texttt{jpkumquat@consortium.net}}).}
-\date{14 September 2011}
+\date{09 December 2011}
 % Just remember to make sure that the TOTAL number of authors
 % is the number that will appear on the first page PLUS the
 % number that will appear in the \additionalauthors section.
@@ -136,9 +136,7 @@ Nicholas Woodward\\
 \maketitle
 \begin{abstract}
 
-With the recent development of Web 2.0 technologies and the concamitant explosion of user-generated content has come an incredible wealth of textual data whose form and content demand new strategies for text retrieval and classification.  In this paper we will describe our approach for extracting phrases that potenntially allude to ideas, behaviors or styles that spread from person to person within a culture, collectively known as memes, from a large corpus of blog data.  In addition to phrase extraction, we use the canopy approach \cite{McCallum2000} with a modified coefficent to cluster similar phrases.  Two Amazon Mechanical Turk\footnote{http://www.mturk.com} jobs are used to measure the likelihood that the clusters constitute a meme, and this data is used to build a feature set for a Support Vector Machine to classify the remaining clusters.
-
-This article is to report our project progress for Fall 2011 Data-Intensive Computing for Text Analysis class. We have completed preprocessing of the Blogs08 collection by removing all HTML tags, boilerplate text, non-English documents, and duplicates. After the preprocessing, aproximately 4 million popular common phrases were extracted using an enhanced version of the technique suggested by \cite{Kolak2008}. The extracted phrases are clustered in 2 million meme groups. The meme groups will be ranked automatically using Support Vector Machine, based on the crowdsourced labels obtained from an Amazon Mechanical Turk.
+With the recent development of Web 2.0 technologies and the concamitant explosion of user-generated content has come an incredible wealth of textual data whose form and content demand new strategies for text retrieval and classification.  In this paper we will describe our approach for extracting phrases that potentially allude to ideas, behaviors or styles that spread from person to person within a culture, collectively known as memes, from a large corpus of blog data.  In addition to phrase extraction, we use the canopy clustering approach \cite{McCallum2000} with a modified coefficent to group similar phrases.  Two Amazon Mechanical Turk\footnote{http://www.mturk.com} jobs are used to measure the likelihood that the clusters constitute a meme, and these data are used to build feature sets for supervising two support vector machines to classify the remaining clusters.
 
 \end{abstract}
 
@@ -147,17 +145,23 @@ This article is to report our project progress for Fall 2011 Data-Intensive Comp
 %A category including the fourth, optional field follows...
 \category{H.5.4}{Information Interfaces and Presentation}{Hypertext/Hypermedia}
 
-\terms{MapReduce, Blogosphere}
+\terms{MapReduce, Blogosphere, Canopy Clustering, Amazon Mechanical Turk, SVM}
 
 \keywords{Keyword Extraction, Data-intensive Processing, Implicit links in Blogosphere, Meme tracking}
 
 \section{Introduction}
 
-Web logs, also known as blogs, are a very important and interesting source of diverse information. They provide insight into the culture of the society in which they exist. People search blogs to find out how to cook, what to do, what to see, and to discover what others think. Because blogs are typically written in plain language by individuals enthusiastic for their interest, they may be more easily understood than longer, more-detailed news articles and cover a wider personal range of topics. 
-As blogs are highly sensitive to fast-changing temporal issues, finding and tracking memes, pieces of information that travel across blog posts, we can mine variety of issues and fads in the blogosphere. In this project we will extract memes from blogs, cluster them by their similarity, and rank the meme clusters using crowdsourcing-powered machine learning.
+Web logs, also known as blogs, are a very important and interesting source of diverse information. They provide insight into the culture of the society in which they exist. People search blogs to find information on a their favorite interests or hobbies, to see what to do or where to go, and to discover what others think. Because blogs are typically written in plain language by individuals enthusiastic about particluar topics, they may be more easily understood than longer, more-detailed news articles and cover a wider range of topics. Blogs are also more likely to contain memes, which are ideas, behaviors and styles that are popular within a certain culture. Memes can generally be identified by relatively short, distinct phrases that travel from person to person in a society. [last sentence]   
+//   In this study we experiment with a method for extracting, clustering and classifying memes from a large corpus of blog data.  Our approach builds on both previous attempts at mining data from the blogosphere and more traditional text clustering and classification algorithms.  Additionally, we incorporate crowdsourced meme-ranking data obtained from Amazon's Mechanical Turk (MTurk) service to train our meme classifier.  This paper is structured as follows: Section 2 situates our approach within the context of previous work.  Section 3 describes our approach to meme extraction.  Sections 4 and 5 discuss our methods of meme clustering and ranking, respectively.  Section 5 will review our evaluation method, and section 6 conludes with paper with a discussion of our results and some potential solutions to the challenges posed by research in the blogosphere.  
 
 \section{Related Work}
+[blogs]
+Retrieving them from a large collection of blog data presents several issues. [extend] 
 
+\\Blogs are regularly updated they are highly sensitive to fast-changing temporal topics, finding and tracking memes, pieces of information that travel across blog posts, we can mine variety of issues and fads in the blogosphere. In this project we will extract memes from blogs, cluster them by their similarity, and rank the meme clusters using crowdsourcing-powered machine learning.
+[text retrieval on the internet]
+
+[text clustering and classifcation]
 
 \section{Meme Extraction}
 
@@ -290,7 +294,7 @@ We were able to resolve the first two issues by modifying several lines of code 
 
 \subsection{Mahout Canopy Clustering}
 If we can represent our data as a vector, the most common and efficient clustering algorithm is $k$-means clustering. The main drawbacks of $k$-means clustering is that we have to specify the number of cluster $k$, a priori information of data distribution and $k$-means clustering is very sensitive to initial seed clusters. Thus, there are many suggestions that we can estimate suitable number of clusters and initial seed clusters using canopy clustering \cite{McCallum2000} because canopy clustering is generating clusters totally based on distance measure. Because Apache Mahout contains canopy clustering implementation, we implemented Jacadi distance measure to Apache Mahout interface and executed Mahout canopy clustering with some parameters.
-\\Canopy clustering receives 2 distance parameters $t_1, t_2$ such that $t_1 > t_2$. It starts with empty canopy list. If the distance between the vector and the canopy in the canopy list is less than $t_1$, the vector is added to the canopy. The distance from the canopy is the distance from the centroid of vectors in the canopy. If there is no canopy whose distance is less than $t_2$, which means the point is not strongly bounded for canopies, the new canopy is created with the point. This is repeated for every point.
+\\   Canopy clustering receives 2 distance parameters $t_1, t_2$ such that $t_1 > t_2$. It starts with empty canopy list. If the distance between the vector and the canopy in the canopy list is less than $t_1$, the vector is added to the canopy. The distance from the canopy is the distance from the centroid of vectors in the canopy. If there is no canopy whose distance is less than $t_2$, which means the point is not strongly bounded for canopies, the new canopy is created with the point. This is repeated for every point.
 We have more than 4.6 million memes and they are highly sparse. Without any tuning of canopy clustering algorithm, even though we specify very generous parameters for $t_1,t_2$, we would have more than million canopies it caused out of memory error while running on Hadoop MapReduce. Also, since its time complexity is near $O(N^2)$ with many canopies, we could not use the original canopy clustering implementation. After these trials and errors, we decided to develop Indexed MapReduce Canopy.
 
 \subsection{Indexed MapReduce Canopy}
