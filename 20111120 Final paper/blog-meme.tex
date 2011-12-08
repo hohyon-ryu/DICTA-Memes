@@ -171,20 +171,23 @@ BLOGS08\footnote{http://ir.dcs.gla.ac.uk/test\_collections/blogs08info.html} is 
 
 \subsection{Preprocessing Blogs08}
 
-Because the collection contains many duplicates, non-English blog posts, advertisement, and HTML tags, the following preprocessing is applied to Blogs08 collection using Python with NLTK and Decruft packages:
+Because the collection contains many duplicates, non-English blog posts, advertisement, and HTML tags, the following preprocessing is applied to Blogs08 collection using Python with Beautifulsoup, NLTK, and Decruft packages:
 
 \begin{itemize}
 \item Decruft
 \item Removing non-English posts
-\item HTML Strip
 \item Deduplication
+\item HTML Strip
 \end{itemize}
 
 
-\subsubsection{Decruft and Removing non-English Posts}
-Decruft\footnote{http://www.minvolai.com/blog/decruft-arc90s-readability-in-python/} extracts only meaningful content from a blog page, filtering out navigation links, advertisements, sidebar contents, and links to other sites. Decruft is a python implementation of ARC90's readability and it improves python-readability in terms of processing speed. We used NLTK\footnote{http://www.nltk.org/} language identification module to determine if the extracted content is written in English. After applying Decruft and removing non-English posts, extracted contents of a blog post are written into a single line per document for the MapReduce meme extraction process and the number of remaining posts was 166,749,81(96 GB).
+\subsubsection{Decruft}
+Decruft\footnote{http://www.minvolai.com/blog/decruft-arc90s-readability-in-python/} extracts only meaningful content from a blog page, filtering out navigation links, advertisements, sidebar contents, and links to other sites. Decruft is a python implementation of ARC90's readability and it improves python-readability in terms of processing speed. 
 
-\subsubsection{HTML-Strip and Deduplication}
+\subsubsection{Removing non-English Posts}
+We used NLTK\footnote{http://www.nltk.org/} language identification module to determine if the extracted content is written in English. After applying Decruft and removing non-English posts, extracted contents of a blog post are written into a single line per document for the MapReduce meme extraction process and the number of remaining posts was 166,749,81(96 GB).
+
+\subsubsection{Deduplication}
 
 Blogs08 also contains many duplicate documents and documents without significant amount of text. We set a lower-bound of 5 words and removed duplicates, also using Python. Finding duplicate document is $O(n^2)$, which requires tremendous amount of running time and computation. To improve its computational complexity and running time, we applied the following optimizations:
 
@@ -240,7 +243,9 @@ dsim=\frac{A \cap B}  {min(|A|, |B|)}
 
 The denominator $min(|A|, |B|)$ was to give a tight denominator. A document that $dsim > 0.85$ with the current document was added to the removal list. In the third step, the entire collection is copied excluding the documents on the removal list. 1,570,428 documents (9.4\%) were removed leaving 15,104,553(85GB) documents after the deduplication process.
 
-Since this document collection will be used to present the blog post in a web interface, HTML tags were preserved. However, as meme extraction need only content text, a duplicate copy of the data collection  was created with HTML stripped and lowercased. The test collection for meme extraction became 43GB after stripping HTML tags using Python Beautifulsoup.
+\subsubsection{HTML Strip}
+
+Since this document collection will be used to present the blog post in a web interface, HTML tags were preserved. However, as meme extraction need only content text, a duplicate copy of the data collection  was created with HTML stripped and lowercased. The test collection for meme extraction became 43GB after stripping HTML tags with Python Beautifulsoup.
 
 
 
@@ -704,7 +709,7 @@ Context is essential to determine if a meme is informative and meaningful. If th
 Let's just list this for a second. John McCain says he's about change, too, and so I guess his whole angle is, watch out, George Bush. Except for economic policy, health care policy, tax policy, education policy, foreign policy and Karl Rove style politics, we're really going to shake things up in Washington. That's not change - that's just calling the same thing something different. But you know, you can put \textbf{lipstick on a pig} - it's still a pig. (excerpted from BLOG08-20080916-022-0053659471 of TREC Blogs08 Collection)
 \end{quote}
 
-We built a web interface names Meme Browser(MB)\footnote{Available at http://stingray.ischool.utexas.edu/meme\_browser/} that highlights memes and provided related documents and timeline of a cluster of memes. Figure \ref{fig:mockup} shows an MB page that presents a blog post related to a meme cluster "lipstick on a pig." On top of the page, MB provides the histogram of the number of documents that included the memes in the same cluster. In this example, we can notice that the phrase "the lipstick on a pick" gained political connotation in September 2008, and frequently discussed throughout the month. The red bars below the time line histogram shows memes in the cluster and how long  and how many times those memes are mentioned in 2008 and early 2009. Left left column of the central frame shows an article. With Decruft and CSS processing, only the contents are shown with a consistent format. The right column shows the list of blogs that the meme appeared. Using this interface, further evaluation will be done to determine the quality of extracted memes. MB help annotators to judge the meaningfulness of memes in context.
+We built a web interface names Meme Browser(MB)\footnote{Available at http://stingray.ischool.utexas.edu/meme\_browser/} that highlights memes and provided related documents and timeline of a cluster of memes. Figure \ref{fig:mockup} shows an MB page that presents a blog post related to a meme cluster "lipstick on a pig." On top of the page, MB provides the histogram of the number of documents that included the memes in the same cluster. In this example, it is noticeable that the phrase "the lipstick on a pick" gained political connotation in September 2008, and frequently discussed throughout the month. The red bars below the time line histogram shows memes in the cluster and how long  and how many times those memes are mentioned in 2008 and early 2009. The histogram and the related memes support mouse over to provide detailed information as shown in the screen shot. Left left column of the central frame shows an article. With Decruft and CSS processing, only the contents are shown with a consistent format. The right column shows the list of blogs that the meme appeared. Using this interface, further evaluation will be done to determine the quality of extracted memes. MB help annotators to judge the meaningfulness of memes in context.
 
 \begin{figure*}[h!]
 	\begin{center}
@@ -715,7 +720,7 @@ We built a web interface names Meme Browser(MB)\footnote{Available at http://sti
 \end{figure*}
 
 \section{Conclusion}
-In this project, we used Hadoop MapReduce to discover informative memes from the large scale blog data. Differently from the previous topic discovery problem, we tried to discover fine-grained unit of information as denoted as \emph{meme} and evaluate them using machine learning technology and human intelligence through Amazon Mechanical Turnk. In the process, we successfully completed challengeable text preprocessing tasks and devised a novel indexed approach for canopy clustering. We collected training data from Amazon Mechanical Turk and tried evaluation of meme clustering with a machine learning technology inspired by ''learning to rank``. The quality of this task is crucially dependent on not only laborous feature enginerring but also targeting appropriate machine learning framework. With the feature set, our classification and regression approaches did not work well, but we are approaching to discovery of informative memes with Bradley-Terry model. We believe that we can discover much information with more robust feature engineering and advanced machine learning technogy.
+In this project, we used Hadoop MapReduce to discover informative memes from the large scale blog data. Differently from the previous topic discovery problem, we tried to discover fine-grained unit of information as denoted as \emph{meme} and evaluate them using machine learning technology and human intelligence through Amazon Mechanical Turk. In the process, we successfully completed challengeable text preprocessing tasks and devised a novel indexed approach for canopy clustering. We collected training data from Amazon Mechanical Turk and tried evaluation of meme clustering with a machine learning technology inspired by ''learning to rank``. The quality of this task is crucially dependent on not only laborous feature enginerring but also targeting appropriate machine learning framework. With the feature set, our classification and regression approaches did not work well, but we are approaching to discovery of informative memes with Bradley-Terry model. We believe that we can discover much information with more robust feature engineering and advanced machine learning technogy.
 
 %
 % The following two commands are all you need in the
