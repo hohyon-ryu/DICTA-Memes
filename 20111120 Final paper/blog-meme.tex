@@ -152,7 +152,9 @@ With the recent development of Web 2.0 technologies and the concamitant explosio
 \section{Introduction}
 
 Web logs, also known as blogs, are a very important and interesting source of diverse information. They provide insight into the culture of the society in which they exist. People search blogs to find information on a their favorite interests or hobbies, to see what to do or where to go, and to discover what others think. Because blogs are typically written in plain language by individuals enthusiastic about particular topics, they may be more easily understood than longer, more-detailed news articles and cover a wider range of topics. Blogs are also more likely to contain memes, or ideas, behaviors and styles that are popular within a certain culture. Memes can generally be identified by relatively short, distinct phrases that travel from person to person in a society.  The fact that blogs are updated regularly makes them a good source for retrieving and extracting memes. 
-//   In this study we experiment with a method for extracting, clustering and classifying memes from a large corpus of blog data.  Our approach builds on previous attempts at mining data from the blogosphere and more traditional text clustering and classification algorithms.  Additionally, we incorporate crowdsourced meme-ranking data obtained from Amazon's Mechanical Turk (MTurk) service to train our meme classifier.  The paper is structured as follows: Section 2 situates our project within the context of previous work.  Section 3 describes our approach to meme extraction.  Sections 4 and 5 discuss our methods of meme clustering and ranking, respectively.  Section 5 will review our evaluation method, and section 6 concludes with paper with a discussion of our results and some potential solutions to the challenges posed by research in the blogosphere.
+
+   In this study we experiment with a method for extracting, clustering and classifying memes from a large corpus of blog data.  Our approach builds on previous attempts at mining data from the blogosphere and more traditional text clustering and classification algorithms.  Additionally, we incorporate crowdsourced meme-ranking data obtained from Amazon's Mechanical Turk (MTurk) service to train our meme classifier.  The paper is structured as follows: Section 2 situates our project within the context of previous work.  Section 3 describes our approach to meme extraction.  Sections 4 and 5 discuss our methods of meme clustering and ranking, respectively.  Section 5 will review our evaluation method, and section 6 concludes with paper with a discussion of our results and some potential solutions to the challenges posed by research in the blogosphere.
+
 \section{Related Work}
 [blogs]
 Retrieving them from a large collection of blog data presents several issues. [extend] 
@@ -244,10 +246,7 @@ The denominator $min(|A|, |B|)$ was to give a tight denominator. A document that
 
 \subsubsection{HTML Strip}
 
-Since this document collection will be used to present the blog post in a web interface, HTML tags were preserved. However, as meme extraction need only content text, a duplicate copy of the data collection  was created with HTML stripped and lowercased. The test collection for meme extraction became 43GB after stripping HTML tags with Python Beautifulsoup.
-
-
-
+For the purposes of extracting memes, HTML tags were removed with the Beautiful Soup HTML parser\footnote{http://www.crummy.com/software/BeautifulSoup/} and all text was converted to lowercase.  The test collection for meme extraction was reduced to 43GB.  HTML tags were preserved separately for later use, because this document collection will be used to present the blog post in a web interface.
 
 \subsection{Meme Extraction with MapReduce}
 
