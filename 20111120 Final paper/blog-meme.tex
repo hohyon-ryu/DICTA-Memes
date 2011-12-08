@@ -562,7 +562,7 @@ Due to our limited success in classifying meme clusters using SVMs, we attempted
 
 Because determining the quality of memes is highly subjective task that may involve knowledge cultural background, global workers at AMT may not be proper people who can judge the quality of memes. For example, a worker other countries may not recognize a celebrity's name or a TV show reference in another country. ``Lipstick on a pig'' may be recognized as a meme if a worker know political context with it, but if a worker does not follow U.S. politics, they may judge it as a nonsensical phrase. Therefore, we have come up with a Meme Tournament Game\footnote{http://stingray.ischool.utexas.edu/meme\_tournament/} interface that can help judge the memes as shown in Figure \ref{fig:game}, and only a few experts are asked to play this. However, since this interface can be criticized as it does not have contextual information for given memes. This is an ongoing project and the results of this game has not been used for training set.
 
-\begin{figure*}[p]
+\begin{figure*}[htb]
 	\begin{center}
 		{\includegraphics[width=\textwidth]{game.jpg}}
 	\end{center}
@@ -598,10 +598,10 @@ Threshold&No. of negative instances in training data&No. of negative instances p
 
 As we can see in Table \ref{table:svm}, the threshold value 0.75 appears to most adequately suit our needs, while the other values were unable to classify meme clusters as positive or negative. Using a threshold value of  0.75, we calculated the probability of positive classification for each meme cluster and then sorted the results. Figure \ref{fig:svm_result} shows the top 20 meme clusters.
 
-\begin{figure}[p]
+\begin{figure*}[htb]
 \begin{center}
 \fbox{
-\begin{tabular}{p{8cm}}
+\begin{tabular}{p{16cm}}
 
 \begin{enumerate}
 \item also offering a 500,are you offering senate candidate 2,offering 10,offering 1,offering 20,offering 30,offering 3,offering 4,offering 5,offering 6
@@ -630,7 +630,7 @@ As we can see in Table \ref{table:svm}, the threshold value 0.75 appears to most
 \caption{Top 20 memes by SVM classification probability}
 \label{fig:svm_result}
 \end{center}
-\end{figure}
+\end{figure*}
 
 Looking at the results, it is apparent that our approach is able to recognize several keywords or phrases in the meme clusters.  But this does not necessarily imply that those clusters are meaningful or informative in the same way as popular phrases that achieve critical mass. For example, if  we search for known memes such as  ``lipstick on a pig'' in the blog data the probability values of meme clusters containing this phrase are all less than 0.5, implying they are not meaningful or relevant. There are several potential causes for our results, including:
 \begin{itemize}
@@ -646,10 +646,10 @@ Because evaluating feature engineering and training set is not easy, we try to r
 \subsubsection{Ranking with Support Vector Regression}
 Regression is estimating the target value based on feature values. Instead of estimatimg probability of meme cluster to be informative, if we calculate scores using Support Vector Regression (SVR), to get informative meme clusters using the same training set from SVM experiment (MT1). We used $\epsilon$-SVR. Root Mean Square Error (RMSE) value for training set is 0.0171578, reasonable value. Figure \ref{fig:svr_result} is showing top 20 memes sorted by regression values.
 
-\begin{figure}[p]
+\begin{figure*}[htb]
 \begin{center}
 \fbox{
-\begin{tabular}{p{8cm}}
+\begin{tabular}{p{16cm}}
 \begin{enumerate}
 \item carisoprodol carisoprodol,carisoprodol posted
 \item bonnie and greta,greta
@@ -679,7 +679,7 @@ Regression is estimating the target value based on feature values. Instead of es
 \caption{Top 20 memes using Support Vector Regression}
 \label{fig:svr_result}
 \end{center}
-\end{figure}
+\end{figure*}
 
 Unfortunately, this result does not look so informative either.
 
@@ -697,10 +697,10 @@ where $\lambda_i=log\alpha_i$ for all $i$. If we assume that all comparisons are
  \item the number of days blog documents were written
 \end{itemize}
 
-\begin{figure}[p]
+\begin{figure*}[htb]
 \begin{center}
 \fbox{
-\begin{tabular}{p{8cm}}
+\begin{tabular}{p{16cm}}
 
 \begin{enumerate}
 
@@ -730,7 +730,7 @@ where $\lambda_i=log\alpha_i$ for all $i$. If we assume that all comparisons are
 \caption{Top 20 memes using the Bradley-Terry model}
 \label{fig:bt_result}
 \end{center}
-\end{figure}
+\end{figure*}
 
 Our original plan was training comparator with a binary classifier using Support Vector Machine. With the same training data described above, we can train the binary classifier for two instances. If we have two instances A, B, if A is better than B, the classifier has to return the label 1 for feature values of difference between A and B, otherwise -1. Armed with the accurate classifier, we can sort memes using the classifier as the comparator. But the problem was accuracy of classification. Training accuracy was slightly better than random, 59\%. The comparator has to return different labels for the difference from A to B and vice versa, but there are many cases the classifier is returning the same labels for each difference. With this inaccurate comparator, we cannot use this approach. Figure \ref{fig:bt_result} shows the top 20 memes that are ranked by Bradley-Terry model.
 
@@ -743,7 +743,7 @@ Let's just list this for a second. John McCain says he's about change, too, and 
 
 We built a web interface names Meme Browser(MB)\footnote{http://stingray.ischool.utexas.edu/meme\_browser/} that highlights memes and provided related documents and timeline of a cluster of memes. Figure \ref{fig:mockup} shows an MB page that presents a blog post related to a meme cluster "lipstick on a pig." On top of the page, MB provides the histogram of the number of documents that included the memes in the same cluster. In this example, it is noticeable that the phrase "the lipstick on a pick" gained political connotation in September 2008, and frequently discussed throughout the month. The red bars below the time line histogram shows memes in the cluster and how long  and how many times those memes are mentioned in 2008 and early 2009. The histogram and the related memes support mouse over to provide detailed information as shown in the screen shot. Left left column of the central frame shows an article. With Decruft and CSS processing, only the contents are shown with a consistent format. The right column shows the list of blogs that the meme appeared. Using this interface, further evaluation will be done to determine the quality of extracted memes. MB help annotators to judge the meaningfulness of memes in context.
 
-\begin{figure*}[p]
+\begin{figure*}[htb]
 	\begin{center}
 		{\includegraphics[width=\textwidth]{mockup.jpg}}
 	\end{center}
