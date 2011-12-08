@@ -167,23 +167,105 @@ Blogs are regularly updated they are highly sensitive to fast-changing temporal 
 
 \subsection{Test Collection}
 
-BLOGS08\footnote{http://ir.dcs.gla.ac.uk/test\_collections/blogs08info.html} is a TREC\footnote{http://trec.nist.gov/} test collection that crawled Web Logs from Jan/14/2008 to Feb/10/2009. It consists of 3 components: feeds, permalink documents, and homepage documents. We use only permalink documents that contain 28,488,766 documents and whose uncompressed size is 1445GB. Because the collection contains many duplicates, non-English blog posts, advertisement, and Blog website frameworks, we will use NLTK and Decruft to extract English blog contents without boilerplate text.
+BLOGS08\footnote{http://ir.dcs.gla.ac.uk/test\_collections/blogs08info.html} is a TREC\footnote{http://trec.nist.gov/} test collection that crawled Web Logs from Jan/14/2008 to Feb/10/2009. It consists of 3 components: feeds, permalink documents, and homepage documents. We use only permalink documents that contain 28,488,766 documents and whose uncompressed size is 1445GB. 
 
 \subsection{Preprocessing Blogs08}
 
-Preprocessing of the Blogs08 Collection was completed using Python with NLTK and Decruft packages. Decruft extracts only meaningful content from a blog page, filtering out navigation links, advertisements, sidebar contents, and links to other sites. NLTK uses a language identification module to determine if the extracted content is written in English. Blogs08 also contains a tremendous amount of duplicate documents and documents without a significant amount of text. We set a lower-bound of 5 words and removed duplicates, also using Python. After all these preprocessing steps were completed, extracted contents of a blog post are written into a single line per document for the MapReduce meme extraction process. The number of Decruft-applied, deduplicated, and HTML stripped English blog posts is 15,097,266 (43 GB).
+Because the collection contains many duplicates, non-English blog posts, advertisement, and HTML tags, the following preprocessing is applied to Blogs08 collection using Python with NLTK and Decruft packages:
 
 \begin{itemize}
-\item English only
 \item Decruft
-\item Deduplication
+\item Removing non-English posts
 \item HTML Strip
+\item Deduplication
 \end{itemize}
+
+
+\subsubsection{Decruft and Removing non-English Posts}
+Decruft\footnote{http://www.minvolai.com/blog/decruft-arc90s-readability-in-python/} extracts only meaningful content from a blog page, filtering out navigation links, advertisements, sidebar contents, and links to other sites. Decruft is a python implementation of ARC90's readability and it improves python-readability in terms of processing speed. We used NLTK\footnote{http://www.nltk.org/} language identification module to determine if the extracted content is written in English. After applying Decruft and removing non-English posts, extracted contents of a blog post are written into a single line per document for the MapReduce meme extraction process and the number of remaining posts was 166,749,81(96 GB).
+
+\subsubsection{HTML-Strip and Deduplication}
+
+Blogs08 also contains many duplicate documents and documents without significant amount of text. We set a lower-bound of 5 words and removed duplicates, also using Python. Finding duplicate document is $O(n^2)$, which requires tremendous amount of running time and computation. To improve its computational complexity and running time, we applied the following optimizations:
+
+\begin{itemize}
+\item First Character Indexing
+\item Similar Length Indexing
+\item Binary Vector of First 4 Characters of Terms
+\end{itemize}
+
+Instead of comparing against all other documents, binary vector of documents are stored in files named by the length of the vector and the lowercased first character of the document. Table \ref{table:dedup} shows an example of a blog post that is indexed in file 00030a. ``00030'' stands for the document length in terms of the number of unique words, and ``a'' stands for the lowercased first character of the document from ``At''. Ignoring HTML tags, the first 4 characters of all the words in the document are stored into the index file as a document vector. By using only first 4 characters, the vectors take less memory and disk space and computation for comparison becomes more efficient.
+
+
+\begin{table}[h!t!]
+\begin{center}
+\begin{tabular}{l|p{6.0cm}}
+
+\hline
+DOC ID & BLOG08-20081015-016-0056752183\\ 
+
+\hline
+Document & 
+
+At Work
+
+
+\emph{(3 pictures omitted)}
+
+
+
+(Photos: Zeitgeist Stage technicians take sand from the back alley of the BCA and spread it around the set for the current production of Seascape.)
+
+Labels: At Work, Seascape, Zeitgeist Stage
+
+
+- posted by Art @ 1:52 PM\\
+\hline
+File name& 00030a\\
+\hline
+Vector & and, set, curr, seas, back, at, art, alle, from, arou, for, 1, take, spre, prod, pm,labe, it, stag, post, by, phot, zeit, of, work, bca, 52, sand, tech, the\\
+
+\hline
+\end{tabular}
+\caption{An example of the index for deduplication. The set of words are stored in a filed named concatenating the length of the word set and the lowercased first letter of the document.}
+\label{table:dedup}
+\end{center}
+\end{table}
+
+
+Once the vector generation is completed for all the documents, the deduplication program goes through the vector files, find duplicate vectors, and write a removal list which is a list of document ids that should be deleted in the next step. If a vector is shorter than 5, the document id is added to the removal list. The program nodes vector files of $\pm 2$ length of the current vector starting with the same character. Document simalarity is measures by the following formula:
+\begin{displaymath}
+dsim=\frac{A \cap B}  {min(|A|, |B|)}
+\end{displaymath}
+
+The denominator $min(|A|, |B|)$ was to give a tight denominator. A document that $dsim > 0.85$ with the current document was added to the removal list. In the third step, the entire collection is copied excluding the documents on the removal list. 1,570,428 documents (9.4\%) were removed leaving 15,104,553(85GB) documents after the deduplication process.
+
+Since this document collection will be used to present the blog post in a web interface, HTML tags were preserved. However, as meme extraction need only content text, a duplicate copy of the data collection  was created with HTML stripped and lowercased. The test collection for meme extraction became 43GB after stripping HTML tags using Python Beautifulsoup.
+
+
 
 
 \subsection{Meme Extraction with MapReduce}
 
-Preprocessed Blogs08 data is comprised of key-value pairs where the key is document number(doc\_id) and the value is the preprocessed content of the blog posts. Using Hadoop Streaming, Python MapReduce code extracts common phrases and groups documents by them. The overall algorithm design follows that of \cite{Kolak2008}. However, due to a scalability issue, lower bounds and upper bounds limit the output size of the data.  Additionally, our approach utilizes other optimizations such as stop word ratio check and preposition trimming. The three steps of MapReduce pseudo-code for Meme Extraction are illustrated in the following pseudo codes. The first MapReduce process splits the input text into sentences and extracts trigrams and their indices within the document. The reducer removes the phrases($trigrams$) that appear less than 5 times or more than 300,000 times.
+Preprocessed Blogs08 data is comprised of key-value pairs where the key is document number(doc\_id) and the value is the preprocessed content of the blog posts. Using Hadoop Streaming, Python MapReduce code extracts common phrases and groups documents by them. The overall algorithm design follows the algorithm presented in \cite{Kolak2008}. However, due to a scalability issue, lower bounds and upper bounds limit the output size of the data and the algorithms are simplified.  Additionally, our approach utilizes other optimizations such as stop word ratio check and preposition trimming. The three steps of MapReduce pseudo-code for Meme Extraction are illustrated in the following pseudo codes. The first MapReduce process splits the input text into sentences and extracts trigrams and their indices within the document. It checks if the trigram is comprised with only words. If all of the three words are stopwords according to a short stop word list shown in Table \ref{table:stopwords}, the trigram is ignored. The reducer removes the phrases($trigrams$) that appear less than 5 times or more than 300,000 times.
+
+\begin{table}[h!t!]
+\begin{center}
+\begin{tabular}{p{1.5cm}|p {6.5cm}}
+
+\hline
+
+\hline
+Short Stopword List & a, the, of, in, on, january, february, march, april, may, june, july, august, september, october, november, december, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec, am, pm \\
+\hline
+Long Stopword List & a, about, above, after, again, against, all, also, am, an, another, and, any, are, aren't, as, at, be, because, been, before, being, below, between, both, but, by, can't, cannot, could, couldn't, did, didn't, do, does, doesn't, doing, don't, down, during, each, few, for, from, further, had, hadn't, has, hasn't, have, haven't, having, he, he'd, he'll, he's, her, here, here's, hers, herself, him, himself, his, how, how's, i, i'd, i'll, i'm, i've, if, in, into, is, isn't, it, it's, its, itself, let's, me, more, most, mustn't, my, myself, no, nor, not, of, off, on, once, only, or, other, ought, our, ours , ourselves, already, out, over, own, same, shan't, she, she'd, she'll, she's, should, shouldn't, so, some, such, than, that, that's, the, their, theirs, them, themselves, then, there, there's, these, they, they'd, they'll, they're, they've, this, those, through, to, too, under, until, up, very, was, wasn't, we, we'd, we'll, we're, we've, were, weren't, what, what's, when, when's, where, where's, which, while, who, who's, whom, why, why's, with, won't, would, wouldn't, you, you'd, you'll, you're, you've, your, yours, yourself, yourselves, january, february, march, april, may, june, july, august, september, october, november, december, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec\\
+
+\hline
+\end{tabular}
+\caption{Stop word list for blogs.}
+\label{table:stopwords}
+\end{center}
+\end{table}
 
 \begin{centering}
 
@@ -198,7 +280,8 @@ for \= ($doc\_id$, $text$) in [input file]:\\
 \>\>	$index$ $\leftarrow$ 0\\
 \>\>	for \= $trigrams$ in $sentence$:\\
 \>\>\>		$index$++	\\
-\>\>\>		emit ($trigrams$, ($doc\_id$, $index$))\\
+\>\>\>		if \= checkStopwords($trigrams$)<1:	\\
+\>\>\>\>		emit ($trigrams$, ($doc\_id$, $index$))\\
 \\
 \emph{Reducer 1:}\\
 $lower\_bound$  $\leftarrow$ 5\\
@@ -228,7 +311,7 @@ for \= ($doc\_id$, [($trigrams$, $index$)]) in [mapper 2 output]:\\
 
 \end{centering}
 
-The third MapReduce process concatenates the adjacent trigrams within a blog post. Mapper 3 concatenates adjacent trigrams into a meme. Before emitting the memes a function trimPrepositions() removes prepositions at the beginning and end of the meme, and a function stopwordRate() checks how many of the words in the meme are stop words. If stop words constitute more than 65\% of the words in the meme it is ignored. In Reducer 3, phrases that are too short ($\leqq 5$) or too long ($\geqq 200$) are ignored as they are often timestamps, advertisement, or boiler plate text. The final MapReduce is illustrated as follows:
+The third MapReduce process concatenates the adjacent trigrams within a blog post. Mapper 3 concatenates adjacent trigrams into a meme. Before emitting the memes a function trimPrepositions() removes prepositions at the beginning and end of the meme, and a function stopwordRate() checks how many of the words in the meme are stop words using the long stopword list shown in Table \ref{table:stopwords}. If stop words constitute more than 65\% of the words in the meme, the meme is ignored. In Reducer 3, phrases that are too short ($\leqq 5$) or too long ($\geqq 200$) are ignored as they are often timestamps, advertisement, or boiler plate text. The final MapReduce is illustrated as follows:
 
 \begin{centering}
 \begin{tabbing}
@@ -265,6 +348,34 @@ for \= ($meme$, [($doc\_id$)]) in [mapper 3 output]:\\
 \end{centering}
 
 The final output is key, value pairs of a meme and the list of the document ids that the meme appears. In total, 4,610,100 memes are extracted from the TREC Blogs08 collection.
+
+Table \ref{table:memeext} illustrates the parameters used for meme extraction.
+
+\begin{table}[h!t!]
+\begin{center}
+\begin{tabular}{l|l}
+
+\hline
+\textbf{Parameter} & \textbf{Value}\\
+
+\hline
+Lowerbound for ngram appearance & 5\\
+\hline
+Upperbound for ngram appearance & 300,000\\
+\hline
+Lowerbound for meme length & 5\\
+\hline
+Upperbound for meme length & 200\\
+
+\hline
+Upperbound for stopword rate within a meme & 0.65\\
+
+\hline
+\end{tabular}
+\caption{The parameters and optimizations used for deduplication.}
+\label{table:memeext}
+\end{center}
+\end{table}
 
 \section{Meme Clustering}
 
@@ -318,7 +429,7 @@ Table \ref{table:sim} shows that Jaccardi's coefficient is much more sensitive t
 \begin{center}
 \begin{tabular}{p{3.0cm}|p{2.2cm}|r|r}
 \hline
-Meme&Centroid&Jaccardi&RBW\\
+\textbf{Meme}&\textbf{Centroid}&\textbf{Jaccardi}&\textbf{RBW}\\
 \hline
 weapons of mass destruction programs&&1.00&1.00\\
 \hline
