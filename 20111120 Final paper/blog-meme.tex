@@ -156,14 +156,17 @@ Web logs, also known as blogs, are a very important and interesting source of di
    In this study we experiment with a method for extracting, clustering and classifying memes from a large corpus of blog data.  Our approach builds on previous attempts at mining data from the blogosphere and more traditional text clustering and classification algorithms.  Additionally, we incorporate crowdsourced meme-ranking data obtained from Amazon's Mechanical Turk (MTurk) service to train our meme classifier.  The paper is structured as follows: Section 2 situates our project within the context of previous work.  Section 3 describes our approach to meme extraction.  Sections 4 and 5 discuss our methods of meme clustering and ranking, respectively.  Section 5 will review our evaluation method, and section 6 concludes with paper with a discussion of our results and some potential solutions to the challenges posed by research in the blogosphere.
 
 \section{Related Work}
-[text retrieval in the blogosphere]
-The universe of blogs, known traditionally as the blogosphere, is an emerging field of research in text retrieval.  
-Retrieving them from a large collection of blog data presents several issues. [extend] 
+[text retrieval in the blogosphere] 
+The universe of blogs, known traditionally as the blogosphere, is an emerging field of research in information retrieval that presents several unique challenges.  The blog format is typically very free form, with strong variation in the type, length and format of text \cite{Schmidt2007}.  The blogosphere is constantly being updated, and thus it is highly sensitive to fast-changing temporal topics.  By extracting and tracking memes in the form of phrases that travel across blogs we can mine variety of issues and fads in the blogosphere.  
 
-Blogs are regularly updated they are highly sensitive to fast-changing temporal topics, finding and tracking memes, pieces of information that travel across blog posts, we can mine variety of issues and fads in the blogosphere. In this project we will extract memes from blogs, cluster them by their similarity, and rank the meme clusters using crowdsourcing-powered machine learning.
-[text retrieval on the internet]
+Compared to web information retrieval, extracting information from blogs is still relatively limited.  Several well-established information retrieval techniques do not perform well on the blogosphere due to sparse links, multimedia contents and the variable length of the contents \cite{Agarwal&Liu2008}.  In particular, PageRank \cite{Bring&Page1998} and HITS \cite{Kleinberg1999} are less effective because blogs are rarely linked together and the overall link structure is sparse.
 
-[text clustering and classifcation]
+Kolak and Schilit \cite{Kolak&Schilit2008} describe a method to generate links by mining quotations in books.  Their approach detects several windows of words that share similar terms and then shingles them together to create longer quotations.  Our approach builds off of this, but because we are searching for short, distinctive phrases in a noisy environment we opt for n-grams of three and then five words, instead of the minimum length of eight proposed by Kolak and Schilit.
+ 
+[crowdsourcing with MTurk] 
+Our project relies on user input from several MTurk jobs in order to rank a training set of memes and create a feature set for later classification.  Amazon's crowdsourcing platform was launched in November, 2005, and there is limited research about its role in scientific experiments.  Though the company releases little information regarding the demographics of people who complete tasks on the site, Ross et al. \cite{Ross,etal2010} surveyed workers and found that in the platform's initial phase the overwhelming majority of workers (83\%) were born the United States.  But since then that percentage has fallen, and the authors projected that by 2010 a majority of workers would come from outside the U.S., with India as the largest contributing country. 
+
+[text clustering and classification] 
 
 \section{Meme Extraction}
 
