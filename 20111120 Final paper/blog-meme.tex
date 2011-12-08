@@ -532,11 +532,39 @@ which means how similar memes in the cluster are each other.
 \subsubsection{Initial Training Set (MT1)}
 Ranking the meme clusters based upon their meaningfulness or informativeness as described above is a difficult and largely subjective task. Consequently, using machine learning for this task is highly problematic. To aid the process of automated classification of the phrase clusters, we implemented an Amazon Mechanical Turk (MTurk) to utilize human intelligence in building a training set \cite{Barr2006}. MTurk is an Internet service for scalable crowdsourcing of simple one-time tasks. It allows \emph{requesters} submit human intelligence tasks (HITs) to be completed by \emph{workers} in exchange for small payments. Requesters approve the results they consider satisfactory, and workers increase their confidence scores with high approval rates.
 
-In our study, we displayed to the user a cluster of phrases and three 100-word snippets of text from the blog data in which the phrases appear, along with seven questions, or HITs, related to the meaningfulness of the phrases. Questions ranged from "Is this a meaningful chunk of information?" to "Is this a common expression that could potentially appear elsewhere?"  In total, we submitted 1090 meme clusters to MTurk with seven HITs each. Workers were required to have a HIT approval rate greater than 85\% and to have completed at least 50 approved HITs.
+In our study, we displayed to the user a cluster of phrases and three 100-word snippets of text from the blog data in which the phrases appear, along with seven questions, or HITs, related to the meaningfulness of the phrases. The following seven questions were asked to determine if a meme is informative and meaningful: 
+
+\begin{enumerate}
+
+\item Is this English?
+\item Is this a meaningful chunk of information?
+\item Can you identify meaningful nouns?
+\item Is this a common expression that could potentially appear in documents?
+\item Can you name the cluster with one phrase?
+\item Does this meme relate to a specific topic?
+\item Is this a popular phrase or expression? 
+\end{enumerate}
+
+In total, we submitted 1090 meme clusters to MTurk with seven HITs each. Workers were required to have a HIT approval rate greater than 85\% and to have completed at least 50 approved HITs.
   All meme clusters were reviewed by three workers to allow for varying subjective assessments.  After removing the highest and lowest total scores to eliminate any individual biases, we calculated the mean score of the cluster and normalized on a 0-1 scale. Each meme cluster was then compared to a range of threshold values for the purposes of the Support Vector Machine, as described in the following section. The labels collected by this initial MTurk HIT is named Mechantal Turk Collection 1(MT1).
 
 \subsubsection{Pairwise Training Set (MT2)}
 Due to our limited success in classifying meme clusters using SVMs, we attempted another approach similar to the Bradley-Terry (1952) model for pairwise comparison.  For our second MTurk, we submitted 1,492 meme clusters to be compared sequentially by workers. After workers were presented with a definition for memes ("an idea, behavior or style that spreads from person to person within a culture") and examples of good and bad memes, workers were asked to select the better meme cluster. Meme cluster \#1 was compared to cluster \#2, cluster \#2 to cluster \#3 and so on. The labels collected by this pairwise comparison MTurk HIT is named Mechantal Turk Collection 2(MT2). The results were used to train the Bradley-Terry model, as described in the following section. 
+
+
+\subsubsection{Training Set from Meme Tournament Game (In Progress)}
+
+Because determining the quality of memes is highly subjective task that may involve knowledge cultural background, global workers at AMT may not be proper people who can judge the quality of memes. For example, a worker other countries may not recognize a celebrity's name or a TV show reference in another country. ``Lipstick on a pig'' may be recognized as a meme if a worker know political context with it, but if a worker does not follow U.S. politics, they may judge it as a nonsensical phrase. Therefore, we have come up with a Meme Tournament Game\footnote{http://stingray.ischool.utexas.edu/meme\_tournament/} interface that can help judge the memes as shown in Figure \ref{fig:game}, and only a few experts are asked to play this. However, since this interface can be criticized as it does not have contextual information for given memes. This is an ongoing project and the results of this game has not been used for training set.
+
+\begin{figure*}[p]
+	\begin{center}
+		{\includegraphics[width=\textwidth]{game.jpg}}
+	\end{center}
+	\caption{A Screen Capture of Meme Browser(MB).}
+	\label{fig:game}
+\end{figure*}
+
+
 
 \subsection{Ranking the Memes with Machine Learning Algorithms}
 \subsubsection{Ranking with Supoprt Vector Machine}
@@ -564,7 +592,7 @@ Threshold&No. of negative instances in training data&No. of negative instances p
 
 As we can see in Table \ref{table:svm}, the threshold value 0.75 appears to most adequately suit our needs, while the other values were unable to classify meme clusters as positive or negative. Using a threshold value of  0.75, we calculated the probability of positive classification for each meme cluster and then sorted the results. Figure \ref{fig:svm_result} shows the top 20 meme clusters.
 
-\begin{figure}[h]
+\begin{figure}[p]
 \begin{center}
 \fbox{
 \begin{tabular}{p{8cm}}
@@ -612,7 +640,7 @@ Because evaluating feature engineering and training set is not easy, we try to r
 \subsubsection{Ranking with Support Vector Regression}
 Regression is estimating the target value based on feature values. Instead of estimatimg probability of meme cluster to be informative, if we calculate scores using Support Vector Regression (SVR), to get informative meme clusters using the same training set from SVM experiment (MT1). We used $\epsilon$-SVR. Root Mean Square Error (RMSE) value for training set is 0.0171578, reasonable value. Figure \ref{fig:svr_result} is showing top 20 memes sorted by regression values.
 
-\begin{figure}[h!b!p!]
+\begin{figure}[p]
 \begin{center}
 \fbox{
 \begin{tabular}{p{8cm}}
@@ -663,7 +691,7 @@ where $\lambda_i=log\alpha_i$ for all $i$. If we assume that all comparisons are
  \item the number of days blog documents were written
 \end{itemize}
 
-\begin{figure}[!t]
+\begin{figure}[p]
 \begin{center}
 \fbox{
 \begin{tabular}{p{8cm}}
@@ -707,9 +735,9 @@ Context is essential to determine if a meme is informative and meaningful. If th
 Let's just list this for a second. John McCain says he's about change, too, and so I guess his whole angle is, watch out, George Bush. Except for economic policy, health care policy, tax policy, education policy, foreign policy and Karl Rove style politics, we're really going to shake things up in Washington. That's not change - that's just calling the same thing something different. But you know, you can put \textbf{lipstick on a pig} - it's still a pig. (excerpted from BLOG08-20080916-022-0053659471 of TREC Blogs08 Collection)
 \end{quote}
 
-We built a web interface names Meme Browser(MB)\footnote{Available at http://stingray.ischool.utexas.edu/meme\_browser/} that highlights memes and provided related documents and timeline of a cluster of memes. Figure \ref{fig:mockup} shows an MB page that presents a blog post related to a meme cluster "lipstick on a pig." On top of the page, MB provides the histogram of the number of documents that included the memes in the same cluster. In this example, it is noticeable that the phrase "the lipstick on a pick" gained political connotation in September 2008, and frequently discussed throughout the month. The red bars below the time line histogram shows memes in the cluster and how long  and how many times those memes are mentioned in 2008 and early 2009. The histogram and the related memes support mouse over to provide detailed information as shown in the screen shot. Left left column of the central frame shows an article. With Decruft and CSS processing, only the contents are shown with a consistent format. The right column shows the list of blogs that the meme appeared. Using this interface, further evaluation will be done to determine the quality of extracted memes. MB help annotators to judge the meaningfulness of memes in context.
+We built a web interface names Meme Browser(MB)\footnote{http://stingray.ischool.utexas.edu/meme\_browser/} that highlights memes and provided related documents and timeline of a cluster of memes. Figure \ref{fig:mockup} shows an MB page that presents a blog post related to a meme cluster "lipstick on a pig." On top of the page, MB provides the histogram of the number of documents that included the memes in the same cluster. In this example, it is noticeable that the phrase "the lipstick on a pick" gained political connotation in September 2008, and frequently discussed throughout the month. The red bars below the time line histogram shows memes in the cluster and how long  and how many times those memes are mentioned in 2008 and early 2009. The histogram and the related memes support mouse over to provide detailed information as shown in the screen shot. Left left column of the central frame shows an article. With Decruft and CSS processing, only the contents are shown with a consistent format. The right column shows the list of blogs that the meme appeared. Using this interface, further evaluation will be done to determine the quality of extracted memes. MB help annotators to judge the meaningfulness of memes in context.
 
-\begin{figure*}[h!]
+\begin{figure*}[p]
 	\begin{center}
 		{\includegraphics[width=\textwidth]{mockup.jpg}}
 	\end{center}
@@ -718,7 +746,9 @@ We built a web interface names Meme Browser(MB)\footnote{Available at http://sti
 \end{figure*}
 
 \section{Conclusion}
-In this project, we used Hadoop MapReduce, Crowdsourcing, and machine learning to find informative memes from a large-scale blog collection. While the previous body of literature focused on extracting named entity and abstract topics from blogs, we tried to extract meaningful chunks of information denoted as \emph{meme} and evaluate them using machine learning technology powered by human intelligence through Amazon Mechanical Turk. In the process, we successfully completed massive text preprocessing to extract memes and devised a novel indexed approach for canopy clustering. We collected training data from Amazon Mechanical Turk and tried to rank meme clusters with a machine learning technology. The quality of this task is crucially dependent on not only laborious feature engineering but also targeting appropriate machine learning framework. With the feature set, our classification and regression approaches did not work well. However, with better modeling, training set and feature engineering in future, we may get better results. The first step of this attempt will be evaluating memes in context with MB to build better training set. Furthermore, to represent the memes in the blogosphere better, time series modeling would be helpful to model the memes in future.
+In this project, we used Hadoop MapReduce, Crowdsourcing, and machine learning to find informative memes from a large-scale blog collection. While the previous body of literature focused on extracting named entity and abstract topics from blogs, we tried to extract meaningful chunks of information denoted as \emph{meme} and evaluate them using machine learning technology powered by human intelligence through Amazon Mechanical Turk. In the process, we successfully completed massive text preprocessing to extract memes and devised a novel indexed approach for canopy clustering. 
+
+We collected training data from Amazon Mechanical Turk and tried to rank meme clusters with a machine learning technology. The quality of this task is crucially dependent on not only laborious feature engineering but also targeting appropriate machine learning framework. With the feature set, our classification and regression approaches did not work well. However, with better modeling, training set and feature engineering in future, we may get better results. The first step of this attempt will be evaluating memes in context with MB to build better training set. Furthermore, to represent the memes in the blogosphere better, time series modeling would be helpful to model the memes in future.
 
 %
 % The following two commands are all you need in the
