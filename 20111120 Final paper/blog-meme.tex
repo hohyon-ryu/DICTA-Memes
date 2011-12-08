@@ -701,7 +701,6 @@ Our original plan was training comparator with a binary classifier using Support
 
 Context is essential to determine if a meme is informative and meaningful. If the meme ``lipstick on a pig'' is give without any context, it is just a phrase with a nonsensical meaning. However, it gains political meaning when it is provided in a full text: 
 \begin{quote}
-
 Let's just list this for a second. John McCain says he's about change, too, and so I guess his whole angle is, watch out, George Bush. Except for economic policy, health care policy, tax policy, education policy, foreign policy and Karl Rove style politics, we're really going to shake things up in Washington. That's not change - that's just calling the same thing something different. But you know, you can put \textbf{lipstick on a pig} - it's still a pig. (excerpted from BLOG08-20080916-022-0053659471 of TREC Blogs08 Collection)
 \end{quote}
 
@@ -715,13 +714,8 @@ We built a web interface names Meme Browser(MB)\footnote{Available at http://sti
 	\label{fig:mockup}
 \end{figure*}
 
-
-
 \section{Conclusion}
-
-
-
-
+In this project, we used Hadoop MapReduce to discover informative memes from the large scale blog data. Differently from the previous topic discovery problem, we tried to discover fine-grained unit of information as denoted as \emph{meme} and evaluate them using machine learning technology and human intelligence through Amazon Mechanical Turnk. In the process, we successfully completed challengeable text preprocessing tasks and devised a novel indexed approach for canopy clustering. We collected training data from Amazon Mechanical Turk and tried evaluation of meme clustering with a machine learning technology inspired by ''learning to rank``. The quality of this task is crucially dependent on not only laborous feature enginerring but also targeting appropriate machine learning framework. With the feature set, our classification and regression approaches did not work well, but we are approaching to discovery of informative memes with Bradley-Terry model. We believe that we can discover much information with more robust feature engineering and advanced machine learning technogy.
 
 %
 % The following two commands are all you need in the
