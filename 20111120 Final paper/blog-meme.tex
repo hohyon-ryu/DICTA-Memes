@@ -172,7 +172,7 @@ BLOGS08\footnote{http://ir.dcs.gla.ac.uk/test\_collections/blogs08info.html} is 
 
 \subsection{Preprocessing Blogs08}
 
-Because the collection contains many duplicates, non-English blog posts, advertisement, and HTML tags, the following preprocessing is applied to Blogs08 collection using Python with Beautifulsoup, NLTK, and Decruft packages:
+Because the collection contains many duplicates, non-English blog posts, advertisement, and HTML tags, the following preprocessing is applied to Blogs08 collection using Beautiful Soup HTML Parser, NLTK, and Decruft packages:
 
 \begin{itemize}
 \item Decruft
@@ -190,7 +190,7 @@ We used NLTK\footnote{http://www.nltk.org/} language identification module to de
 
 \subsubsection{Deduplication}
 
-Blogs08 also contains many duplicate documents and documents without significant amount of text. We set a lower-bound of 5 words and removed duplicates, also using Python. Finding duplicate document is $O(n^2)$, which requires tremendous amount of running time and computation. To improve its computational complexity and running time, we applied the following optimizations:
+Blogs08 also contains many duplicate documents and documents without a significant amount of text. We set a lower-bound of five words and removed duplicates, also using Python. Finding duplicate document is $O(n^2)$, which requires tremendous amount of running time and computation. To improve its computational complexity and running time, we applied the following optimizations:
 
 \begin{itemize}
 \item First Character Indexing
