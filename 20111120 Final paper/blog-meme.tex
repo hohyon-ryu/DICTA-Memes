@@ -573,31 +573,7 @@ Our original plan was training comparator with a binary classifier using Support
 Based on the labels collected with the MTurk, the performance on SVM-based ranking will be evaluated.
 
 \section{Conclusion}
-
-
-\section{Logistics}
-
-\subsection{Division of Work}
-
-\begin{itemize}
-\item Hohyon Ryu: Data Preprocessing, Meme Extraction, Meme Clustering
-\item Jae Hyeon Bae: Theoretical Background, SVM-based Meme Ranking
-\item Nicholas Woodward: Theoretical Background, Crowdsourcing the meme cluster evaluation, Mock-up Webpage Build
-\end{itemize}
-
-\subsection{Timeline}
-
-
-\begin{itemize}
-  \item Oct/6: Preprocessing - Done
-  \item Oct/13: Meme Extraction - Done
-  \item Oct/20 \& 27: Meme Clustering - Done
-  \item Nov/3 \& 10: Crowdsourcing 
-  \item Nov/10: SVM-based Meme Cluster Ranking
-  \item Nov/17: Finalizing Paper
-  \item Dec/1: Presentation
-\end{itemize}
-
+In this project, we used Hadoop MapReduce to discover informative memes from the large scale blog data. Differently from the previous topic discovery problem, we tried to discover fine-grained unit of information as denoted as \emph{meme} and evaluate them using machine learning technology and human intelligence through Amazon Mechanical Turnk. In the process, we successfully completed challengeable text preprocessing tasks and devised a novel indexed approach for canopy clustering. We collected training data from Amazon Mechanical Turk and tried evaluation of meme clustering with a machine learning technology inspired by ''learning to rank``. The quality of this task is crucially dependent on not only laborous feature enginerring but also targeting appropriate machine learning framework. With the feature set, our classification and regression approaches did not work well, but we are approaching to discovery of informative memes with Bradley-Terry model. We believe that we can discover much information with more robust feature engineering and advanced machine learning technogy.
 
 %
 % The following two commands are all you need in the
