@@ -151,42 +151,133 @@ With the recent development of Web 2.0 technologies and the concamitant explosio
 
 \section{Introduction}
 
-Web logs, also known as blogs, are a very important and interesting source of diverse information. They provide insight into the culture of the society in which they exist. People search blogs to find information on a their favorite interests or hobbies, to see what to do or where to go, and to discover what others think. Because blogs are typically written in plain language by individuals enthusiastic about particluar topics, they may be more easily understood than longer, more-detailed news articles and cover a wider range of topics. Blogs are also more likely to contain memes, which are ideas, behaviors and styles that are popular within a certain culture. Memes can generally be identified by relatively short, distinct phrases that travel from person to person in a society. [last sentence]   
-//   In this study we experiment with a method for extracting, clustering and classifying memes from a large corpus of blog data.  Our approach builds on both previous attempts at mining data from the blogosphere and more traditional text clustering and classification algorithms.  Additionally, we incorporate crowdsourced meme-ranking data obtained from Amazon's Mechanical Turk (MTurk) service to train our meme classifier.  This paper is structured as follows: Section 2 situates our approach within the context of previous work.  Section 3 describes our approach to meme extraction.  Sections 4 and 5 discuss our methods of meme clustering and ranking, respectively.  Section 5 will review our evaluation method, and section 6 conludes with paper with a discussion of our results and some potential solutions to the challenges posed by research in the blogosphere.  
+Web logs, also known as blogs, are a very important and interesting source of diverse information. They provide insight into the culture of the society in which they exist. People search blogs to find information on a their favorite interests or hobbies, to see what to do or where to go, and to discover what others are talking about. Because blogs are typically written in plain language by individuals enthusiastic about particular topics, they may be more easily understood than longer, more-detailed news articles and cover a wider range of topics. Blogs are also more likely to contain memes, or ideas, behaviors and styles that are popular within a certain culture. Memes can generally be identified by relatively short, distinct phrases that travel from person to person in a society.  The fact that blogs are updated regularly makes them a good source for retrieving and extracting memes.  In this study we experiment with a method for extracting, clustering and classifying memes from a large corpus of blog data.  Our approach builds on previous attempts at mining data from the blogosphere and more traditional text clustering and classification algorithms.  Additionally, we incorporate crowdsourced meme-ranking data obtained from Amazon's Mechanical Turk (MTurk) service to train two meme classifiers.  We conclude with results from our meme rankings and some potential solutions to the challenges posed by research in the blogosphere.  
 
 \section{Related Work}
-[blogs]
-Retrieving them from a large collection of blog data presents several issues. [extend] 
+[text retrieval in the blogosphere] 
+The universe of blogs, known traditionally as the blogosphere, is an emerging field of research in information retrieval that presents several unique challenges.  The blog format is typically very free form, with strong variation in the type, length and format of text \cite{Schmidt2007}.  Blogs may contain structured or unstructured information and numerous anomalies in spelling and punctation that may be intentional or not.  The blogosphere is constantly being updated, and thus it is highly sensitive to fast-changing temporal topics.  By extracting and tracking memes in the form of phrases that travel across blogs we can mine variety of issues and fads in the blogosphere.  
 
-Blogs are regularly updated they are highly sensitive to fast-changing temporal topics, finding and tracking memes, pieces of information that travel across blog posts, we can mine variety of issues and fads in the blogosphere. In this project we will extract memes from blogs, cluster them by their similarity, and rank the meme clusters using crowdsourcing-powered machine learning.
-[text retrieval on the internet]
+Compared to web information retrieval, extracting information from blogs is still relatively limited.  Several well-established information retrieval techniques do not perform well on the blogosphere due to sparse links, multimedia contents and the variable length of the contents \cite{Agarwal&Liu2008}.  In particular, ranking algorithms such as PageRank \cite{Brin&Page1998} and HyperText Induced Topic Selection (HITS) \cite{Kleinberg1999} are less effective because blogs are rarely linked together and the overall link structure is sparse.  Several new blog ranking techniques use characteristics of the blog content, a score to measure the blog's influence, or the originality of the text in the blogosphere to compliment standard link algorithms \cite{Song2007}\cite{Hassan,etal2009}. 
 
-[text clustering and classifcation]
-Our work is related with finding information from the large scale corpus. Clustering algorithm is the basic data mining tool for discovering topics in document collection \cite{Jayabharathy2011}. In information retrieval, clustering have a wide range of application including search result clustering, scatter-gather, collection clustering, and cluster-based retrieval \cite{Manning2008}. Clustering can aggregate dispersed information and help clarify how to find access points for information in the large scale corpus.
+Kolak and Schilit \cite{Kolak&Schilit2008} describe a method to generate links by mining quotations in books.  Their approach detects several windows of words that share similar terms and then shingles them together to create longer quotations.  Our approach builds off of this, but because we are searching for short, distinctive phrases in a noisy environment we opt for n-grams of three and then five words, instead of their minimum length of eight words.
+ 
+[crowdsourcing with MTurk] 
+Our project relies on user input from several MTurk jobs in order to rank a training set of memes and create a feature set for later classification.  Amazon's crowdsourcing platform was launched in November, 2005, and there is limited research about its role in scientific experiments.  Though the company releases little information regarding the demographics of people who complete tasks on the site, Ross et al. \cite{Ross,etal2010} surveyed workers and found that in the platform's initial phase the overwhelming majority of workers (83\%) were born the United States.  But since that time the percentage has fallen, and the authors projected that by 2010 a majority of workers would come from outside the U.S., with India as the largest contributing country. 
+
+[text clustering and classification]
+Clustering algorithm is the basic data mining tool for discovering topics in document collection \cite{Jayabharathy2011}. In information retrieval, clustering have a wide range of application including search result clustering, scatter-gather, collection clustering, and cluster-based retrieval \cite{Manning2008}. Clustering can aggregate dispersed information and help clarify how to find access points for information in the large scale corpus. Also, clustering algorithms have been used to mine information in the blogosphere for a variety of purposes.  They have been used to detect popular topics and extract trends based on keyword clusters that ebb and flow over time \cite{Qmara,Tseng&Chang2006} \cite{Bansal,etal2007}.  Lin, et al. \cite{Lin,etal2007} demonstrate how blogs can be grouped into communities based on common topics.  Our approach varies from the others in that we are only concerned with cluster
+
+[mapreduce]
+\cite{Dean&Ghemawat2008} 
 
 [learning to rank]
-Recently, there are various ranking algorithms. RankNet \cite{Burges2005} is based on pairwise preference and uses neural net to learn ranking functions. McRank \cite{
+Recently, there are various ranking algorithms. RankNet \cite{Burges2005} is based on pairwise preference and uses neural net to learn ranking functions. McRank \cite{Li2007} convert the ranking problem into the multiple classification, where the classification probability was changed to the ranking score using \emph{Expected Relevance}. This method proved to outperform another pairwise preference method LambdaRank \cite{Burges2007} and regression-based ranker \cite{Cossock2006}. We are inspired by these ideas and tried several simple ``learning to rank'' ideas for our experiment.
+
 \section{Meme Extraction}
 
 \subsection{Test Collection}
 
-BLOGS08\footnote{http://ir.dcs.gla.ac.uk/test\_collections/blogs08info.html} is a TREC\footnote{http://trec.nist.gov/} test collection that crawled Web Logs from Jan/14/2008 to Feb/10/2009. It consists of 3 components: feeds, permalink documents, and homepage documents. We use only permalink documents that contain 28,488,766 documents and whose uncompressed size is 1445GB. Because the collection contains many duplicates, non-English blog posts, advertisement, and Blog website frameworks, we will use NLTK and Decruft to extract English blog contents without boilerplate text.
+BLOGS08\footnote{http://ir.dcs.gla.ac.uk/test\_collections/blogs08info.html} is a TREC\footnote{http://trec.nist.gov/} test collection that crawled Web Logs from Jan/14/2008 to Feb/10/2009. It consists of 3 components: feeds, permalink documents, and homepage documents. We use only permalink documents that contain 28,488,766 documents and whose uncompressed size is 1445GB. 
 
 \subsection{Preprocessing Blogs08}
 
-Preprocessing of the Blogs08 Collection was completed using Python with NLTK and Decruft packages. Decruft extracts only meaningful content from a blog page, filtering out navigation links, advertisements, sidebar contents, and links to other sites. NLTK uses a language identification module to determine if the extracted content is written in English. Blogs08 also contains a tremendous amount of duplicate documents and documents without a significant amount of text. We set a lower-bound of 5 words and removed duplicates, also using Python. After all these preprocessing steps were completed, extracted contents of a blog post are written into a single line per document for the MapReduce meme extraction process. The number of Decruft-applied, deduplicated, and HTML stripped English blog posts is 15,097,266 (43 GB).
+Because the collection contains many duplicates, non-English blog posts, advertisement, and HTML tags, the following preprocessing is applied to Blogs08 collection using Beautiful Soup HTML Parser, NLTK, and Decruft packages:
 
 \begin{itemize}
-\item English only
 \item Decruft
+\item Removing non-English posts
 \item Deduplication
 \item HTML Strip
 \end{itemize}
 
 
+\subsubsection{Decruft}
+Decruft\footnote{http://www.minvolai.com/blog/decruft-arc90s-readability-in-python/} extracts only meaningful content from a blog page, filtering out navigation links, advertisements, sidebar contents, and links to other sites. Decruft is a python implementation of ARC90's readability and it improves python-readability in terms of processing speed. 
+
+\subsubsection{Removing non-English Posts}
+We used NLTK\footnote{http://www.nltk.org/} language identification module to determine if the extracted content is written in English. After applying Decruft and removing non-English posts, extracted contents of a blog post are written into a single line per document for the MapReduce meme extraction process and the number of remaining posts was 166,749,81(96 GB).
+
+\subsubsection{Deduplication}
+
+Blogs08 also contains many duplicate documents and documents without a significant amount of text. We set a lower-bound of five words and removed duplicates, also using Python. Finding duplicate document is $O(n^2)$, which requires tremendous amount of running time and computation. To improve its computational complexity and running time, we applied the following optimizations:
+
+\begin{itemize}
+\item First Character Indexing
+\item Similar Length Indexing
+\item Binary Vector of First 4 Characters of Terms
+\end{itemize}
+
+Instead of comparing against all other documents, binary vector of documents are stored in files named by the length of the vector and the lowercased first character of the document. Table \ref{table:dedup} shows an example of a blog post that is indexed in file 00030a. ``00030'' stands for the document length in terms of the number of unique words, and ``a'' stands for the lowercased first character of the document from ``At''. Ignoring HTML tags, the first 4 characters of all the words in the document are stored into the index file as a document vector. By using only first 4 characters, the vectors take less memory and disk space and computation for comparison becomes more efficient.
+
+
+\begin{table}[h!t!]
+\begin{center}
+\begin{tabular}{l|p{6.0cm}}
+
+\hline
+DOC ID & BLOG08-20081015-016-0056752183\\ 
+
+\hline
+Document & 
+
+At Work
+
+
+\emph{(3 pictures omitted)}
+
+
+
+(Photos: Zeitgeist Stage technicians take sand from the back alley of the BCA and spread it around the set for the current production of Seascape.)
+
+Labels: At Work, Seascape, Zeitgeist Stage
+
+
+- posted by Art @ 1:52 PM\\
+\hline
+File name& 00030a\\
+\hline
+Vector & and, set, curr, seas, back, at, art, alle, from, arou, for, 1, take, spre, prod, pm,labe, it, stag, post, by, phot, zeit, of, work, bca, 52, sand, tech, the\\
+
+\hline
+\end{tabular}
+\caption{An example of the index for deduplication. The set of words are stored in a filed named concatenating the length of the word set and the lowercased first letter of the document.}
+\label{table:dedup}
+\end{center}
+\end{table}
+
+
+Once the vector generation is completed for all the documents, the deduplication program goes through the vector files, find duplicate vectors, and write a removal list which is a list of document ids that should be deleted in the next step. If a vector is shorter than 5, the document id is added to the removal list. The program nodes vector files of $\pm 2$ length of the current vector starting with the same character. Document simalarity is measures by the following formula:
+\begin{displaymath}
+dsim=\frac{A \cap B}  {min(|A|, |B|)}
+\end{displaymath}
+
+The denominator $min(|A|, |B|)$ was to give a tight denominator. A document that $dsim > 0.85$ with the current document was added to the removal list. In the third step, the entire collection is copied excluding the documents on the removal list. 1,570,428 documents (9.4\%) were removed leaving 15,104,553(85GB) documents after the deduplication process.
+
+\subsubsection{HTML Strip}
+
+For the purposes of extracting memes, HTML tags were removed with the Beautiful Soup HTML parser\footnote{http://www.crummy.com/software/BeautifulSoup/} and all text was converted to lowercase.  The test collection for meme extraction was reduced to 43GB.  HTML tags were preserved separately for later use, because this document collection will be used to present the blog post in a web interface.
+
 \subsection{Meme Extraction with MapReduce}
 
-Preprocessed Blogs08 data is comprised of key-value pairs where the key is document number(doc\_id) and the value is the preprocessed content of the blog posts. Using Hadoop Streaming, Python MapReduce code extracts common phrases and groups documents by them. The overall algorithm design follows that of \cite{Kolak2008}. However, due to a scalability issue, lower bounds and upper bounds limit the output size of the data.  Additionally, our approach utilizes other optimizations such as stop word ratio check and preposition trimming. The three steps of MapReduce pseudo-code for Meme Extraction are illustrated in the following pseudo codes. The first MapReduce process splits the input text into sentences and extracts trigrams and their indices within the document. The reducer removes the phrases($trigrams$) that appear less than 5 times or more than 300,000 times.
+Preprocessed Blogs08 data is comprised of key-value pairs where the key is document number(doc\_id) and the value is the preprocessed content of the blog posts. Using Hadoop Streaming, Python MapReduce code extracts common phrases and groups documents by them. The overall algorithm design follows the algorithm presented in \cite{Kolak2008}. However, due to a scalability issue, lower bounds and upper bounds limit the output size of the data and the algorithms are simplified.  Additionally, our approach utilizes other optimizations such as stop word ratio check and preposition trimming. The three steps of MapReduce pseudo-code for Meme Extraction are illustrated in the following pseudo codes. The first MapReduce process splits the input text into sentences and extracts trigrams and their indices within the document. It checks if the trigram is comprised with only words. If all of the three words are stopwords according to a short stop word list shown in Table \ref{table:stopwords}, the trigram is ignored. The reducer removes the phrases($trigrams$) that appear less than 5 times or more than 300,000 times.
+
+\begin{table}[h!t!]
+\begin{center}
+\begin{tabular}{p{1.5cm}|p {6.5cm}}
+
+\hline
+
+\hline
+Short Stopword List & a, the, of, in, on, january, february, march, april, may, june, july, august, september, october, november, december, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec, am, pm \\
+\hline
+Long Stopword List & a, about, above, after, again, against, all, also, am, an, another, and, any, are, aren't, as, at, be, because, been, before, being, below, between, both, but, by, can't, cannot, could, couldn't, did, didn't, do, does, doesn't, doing, don't, down, during, each, few, for, from, further, had, hadn't, has, hasn't, have, haven't, having, he, he'd, he'll, he's, her, here, here's, hers, herself, him, himself, his, how, how's, i, i'd, i'll, i'm, i've, if, in, into, is, isn't, it, it's, its, itself, let's, me, more, most, mustn't, my, myself, no, nor, not, of, off, on, once, only, or, other, ought, our, ours , ourselves, already, out, over, own, same, shan't, she, she'd, she'll, she's, should, shouldn't, so, some, such, than, that, that's, the, their, theirs, them, themselves, then, there, there's, these, they, they'd, they'll, they're, they've, this, those, through, to, too, under, until, up, very, was, wasn't, we, we'd, we'll, we're, we've, were, weren't, what, what's, when, when's, where, where's, which, while, who, who's, whom, why, why's, with, won't, would, wouldn't, you, you'd, you'll, you're, you've, your, yours, yourself, yourselves, january, february, march, april, may, june, july, august, september, october, november, december, jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec\\
+
+\hline
+\end{tabular}
+\caption{Stop word list for blogs.}
+\label{table:stopwords}
+\end{center}
+\end{table}
 
 \begin{centering}
 
@@ -201,7 +292,8 @@ for \= ($doc\_id$, $text$) in [input file]:\\
 \>\>	$index$ $\leftarrow$ 0\\
 \>\>	for \= $trigrams$ in $sentence$:\\
 \>\>\>		$index$++	\\
-\>\>\>		emit ($trigrams$, ($doc\_id$, $index$))\\
+\>\>\>		if \= checkStopwords($trigrams$)<1:	\\
+\>\>\>\>		emit ($trigrams$, ($doc\_id$, $index$))\\
 \\
 \emph{Reducer 1:}\\
 $lower\_bound$  $\leftarrow$ 5\\
@@ -231,7 +323,7 @@ for \= ($doc\_id$, [($trigrams$, $index$)]) in [mapper 2 output]:\\
 
 \end{centering}
 
-The third MapReduce process concatenates the adjacent trigrams within a blog post. Mapper 3 concatenates adjacent trigrams into a meme. Before emitting the memes a function trimPrepositions() removes prepositions at the beginning and end of the meme, and a function stopwordRate() checks how many of the words in the meme are stop words. If stop words constitute more than 65\% of the words in the meme it is ignored. In Reducer 3, phrases that are too short ($\leqq 5$) or too long ($\geqq 200$) are ignored as they are often timestamps, advertisement, or boiler plate text. The final MapReduce is illustrated as follows:
+The third MapReduce process concatenates the adjacent trigrams within a blog post. Mapper 3 concatenates adjacent trigrams into a meme. Before emitting the memes a function trimPrepositions() removes prepositions at the beginning and end of the meme, and a function stopwordRate() checks how many of the words in the meme are stop words using the long stopword list shown in Table \ref{table:stopwords}. If stop words constitute more than 65\% of the words in the meme, the meme is ignored. In Reducer 3, phrases that are too short ($\leqq 5$) or too long ($\geqq 200$) are ignored as they are often timestamps, advertisement, or boiler plate text. The final MapReduce is illustrated as follows:
 
 \begin{centering}
 \begin{tabbing}
@@ -268,6 +360,34 @@ for \= ($meme$, [($doc\_id$)]) in [mapper 3 output]:\\
 \end{centering}
 
 The final output is key, value pairs of a meme and the list of the document ids that the meme appears. In total, 4,610,100 memes are extracted from the TREC Blogs08 collection.
+
+Table \ref{table:memeext} illustrates the parameters used for meme extraction.
+
+\begin{table}[h!t!]
+\begin{center}
+\begin{tabular}{l|l}
+
+\hline
+\textbf{Parameter} & \textbf{Value}\\
+
+\hline
+Lowerbound for ngram appearance & 5\\
+\hline
+Upperbound for ngram appearance & 300,000\\
+\hline
+Lowerbound for meme length & 5\\
+\hline
+Upperbound for meme length & 200\\
+
+\hline
+Upperbound for stopword rate within a meme & 0.65\\
+
+\hline
+\end{tabular}
+\caption{The parameters and optimizations used for deduplication.}
+\label{table:memeext}
+\end{center}
+\end{table}
 
 \section{Meme Clustering}
 
@@ -321,7 +441,7 @@ Table \ref{table:sim} shows that Jaccardi's coefficient is much more sensitive t
 \begin{center}
 \begin{tabular}{p{3.0cm}|p{2.2cm}|r|r}
 \hline
-Meme&Centroid&Jaccardi&RBW\\
+\textbf{Meme}&\textbf{Centroid}&\textbf{Jaccardi}&\textbf{RBW}\\
 \hline
 weapons of mass destruction programs&&1.00&1.00\\
 \hline
@@ -419,13 +539,41 @@ which means how similar memes in the cluster are each other.
 \subsection{Building Training Set with Amazon Mechanical Turk}
 
 \subsubsection{Initial Training Set (MT1)}
-Ranking the meme clusters based upon their meaningfulness or informativeness as described above is a difficult and largely subjective task. Consequently, using machine learning for this task is highly problematic. To aid the process of automated classification of the phrase clusters, we implemented an Amazon Mechanical Turk (MTurk) to utilize human intelligence in building a training set \cite{Barr2006}. MTurk is an Internet service for scalable crowdsourcing of simple one-time tasks. It allows \emph{requesters} submit human intelligence tasks (HITs) to be completed by \emph{workers} in exchange for small payments. Requesters approve the results they consider satisfactory, and workers increase their confidence scores with high approval rates.
+Ranking the meme clusters based upon their meaningfulness or informativeness as described above is a difficult and largely subjective task. Consequently, using machine learning for this task is highly problematic. To aid the process of automated classification of the phrase clusters, we implemented an Amazon Mechanical Turk (MTurk) to utilize human intelligence in building a training set \cite{Barr2006}. MTurk is an Internet service from Amazon for scalable crowdsourcing of simple one-time tasks. It allows \emph{requesters} submit human intelligence tasks (HITs) to be completed by \emph{workers} in exchange for small payments. Requesters approve the results they consider satisfactory, and workers increase their confidence scores with high approval rates.
 
-In our study, we displayed to the user a cluster of phrases and three 100-word snippets of text from the blog data in which the phrases appear, along with seven questions, or HITs, related to the meaningfulness of the phrases. Questions ranged from "Is this a meaningful chunk of information?" to "Is this a common expression that could potentially appear elsewhere?"  In total, we submitted 1090 meme clusters to MTurk with seven HITs each. Workers were required to have a HIT approval rate greater than 85\% and to have completed at least 50 approved HITs.
+In our study, we displayed to the user a cluster of phrases and three 100-word snippets of text from the blog data in which the phrases appear, along with seven questions, or HITs, related to the meaningfulness of the phrases. The following seven questions were asked to determine if a meme is informative and meaningful: 
+
+\begin{enumerate}
+
+\item Is this English?
+\item Is this a meaningful chunk of information?
+\item Can you identify meaningful nouns?
+\item Is this a common expression that could potentially appear in documents?
+\item Can you name the cluster with one phrase?
+\item Does this meme relate to a specific topic?
+\item Is this a popular phrase or expression? 
+\end{enumerate}
+
+In total, we submitted 1090 meme clusters to MTurk with seven HITs each. Workers were required to have a HIT approval rate greater than 85\% and to have completed at least 50 approved HITs.
   All meme clusters were reviewed by three workers to allow for varying subjective assessments.  After removing the highest and lowest total scores to eliminate any individual biases, we calculated the mean score of the cluster and normalized on a 0-1 scale. Each meme cluster was then compared to a range of threshold values for the purposes of the Support Vector Machine, as described in the following section. The labels collected by this initial MTurk HIT is named Mechantal Turk Collection 1(MT1).
 
-\subsubsection{Additional Training Set (MT2)}
+\subsubsection{Pairwise Training Set (MT2)}
 Due to our limited success in classifying meme clusters using SVMs, we attempted another approach similar to the Bradley-Terry (1952) model for pairwise comparison.  For our second MTurk, we submitted 1,492 meme clusters to be compared sequentially by workers. After workers were presented with a definition for memes ("an idea, behavior or style that spreads from person to person within a culture") and examples of good and bad memes, workers were asked to select the better meme cluster. Meme cluster \#1 was compared to cluster \#2, cluster \#2 to cluster \#3 and so on. The labels collected by this pairwise comparison MTurk HIT is named Mechantal Turk Collection 2(MT2). The results were used to train the Bradley-Terry model, as described in the following section. 
+
+
+\subsubsection{Training Set from Meme Tournament Game (In Progress)}
+
+Because determining the quality of memes is highly subjective task that may involve knowledge cultural background, global workers at AMT may not be proper people who can judge the quality of memes. For example, a worker other countries may not recognize a celebrity's name or a TV show reference in another country. ``Lipstick on a pig'' may be recognized as a meme if a worker know political context with it, but if a worker does not follow U.S. politics, they may judge it as a nonsensical phrase. Therefore, we have come up with a Meme Tournament Game\footnote{http://stingray.ischool.utexas.edu/meme\_tournament/} interface that can help judge the memes as shown in Figure \ref{fig:game}, and only a few experts are asked to play this. However, since this interface can be criticized as it does not have contextual information for given memes. This is an ongoing project and the results of this game has not been used for training set.
+
+\begin{figure*}[p]
+	\begin{center}
+		{\includegraphics[width=\textwidth]{game.jpg}}
+	\end{center}
+	\caption{A Screen Capture of Meme Browser(MB).}
+	\label{fig:game}
+\end{figure*}
+
+
 
 \subsection{Ranking the Memes with Machine Learning Algorithms}
 \subsubsection{Ranking with Supoprt Vector Machine}
@@ -453,7 +601,7 @@ Threshold&No. of negative instances in training data&No. of negative instances p
 
 As we can see in Table \ref{table:svm}, the threshold value 0.75 appears to most adequately suit our needs, while the other values were unable to classify meme clusters as positive or negative. Using a threshold value of  0.75, we calculated the probability of positive classification for each meme cluster and then sorted the results. Figure \ref{fig:svm_result} shows the top 20 meme clusters.
 
-\begin{figure}[h]
+\begin{figure}[p]
 \begin{center}
 \fbox{
 \begin{tabular}{p{8cm}}
@@ -501,7 +649,7 @@ Because evaluating feature engineering and training set is not easy, we try to r
 \subsubsection{Ranking with Support Vector Regression}
 Regression is estimating the target value based on feature values. Instead of estimatimg probability of meme cluster to be informative, if we calculate scores using Support Vector Regression (SVR), to get informative meme clusters using the same training set from SVM experiment (MT1). We used $\epsilon$-SVR. Root Mean Square Error (RMSE) value for training set is 0.0171578, reasonable value. Figure \ref{fig:svr_result} is showing top 20 memes sorted by regression values.
 
-\begin{figure}[h!b!p!]
+\begin{figure}[p]
 \begin{center}
 \fbox{
 \begin{tabular}{p{8cm}}
@@ -552,7 +700,7 @@ where $\lambda_i=log\alpha_i$ for all $i$. If we assume that all comparisons are
  \item the number of days blog documents were written
 \end{itemize}
 
-\begin{figure}[!t]
+\begin{figure}[p]
 \begin{center}
 \fbox{
 \begin{tabular}{p{8cm}}
@@ -596,9 +744,9 @@ Context is essential to determine if a meme is informative and meaningful. If th
 Let's just list this for a second. John McCain says he's about change, too, and so I guess his whole angle is, watch out, George Bush. Except for economic policy, health care policy, tax policy, education policy, foreign policy and Karl Rove style politics, we're really going to shake things up in Washington. That's not change - that's just calling the same thing something different. But you know, you can put \textbf{lipstick on a pig} - it's still a pig. (excerpted from BLOG08-20080916-022-0053659471 of TREC Blogs08 Collection)
 \end{quote}
 
-We built a web interface names Meme Browser(MB)\footnote{Available at http://stingray.ischool.utexas.edu/meme\_browser/} that highlights memes and provided related documents and timeline of a cluster of memes. Figure \ref{fig:mockup} shows an MB page that presents a blog post related to a meme cluster "lipstick on a pig." On top of the page, MB provides the histogram of the number of documents that included the memes in the same cluster. In this example, we can notice that the phrase "the lipstick on a pick" gained political connotation in September 2008, and frequently discussed throughout the month. The red bars below the time line histogram shows memes in the cluster and how long  and how many times those memes are mentioned in 2008 and early 2009. Left left column of the central frame shows an article. With Decruft and CSS processing, only the contents are shown with a consistent format. The right column shows the list of blogs that the meme appeared. Using this interface, further evaluation will be done to determine the quality of extracted memes. MB help annotators to judge the meaningfulness of memes in context.
+We built a web interface names Meme Browser(MB)\footnote{http://stingray.ischool.utexas.edu/meme\_browser/} that highlights memes and provided related documents and timeline of a cluster of memes. Figure \ref{fig:mockup} shows an MB page that presents a blog post related to a meme cluster "lipstick on a pig." On top of the page, MB provides the histogram of the number of documents that included the memes in the same cluster. In this example, it is noticeable that the phrase "the lipstick on a pick" gained political connotation in September 2008, and frequently discussed throughout the month. The red bars below the time line histogram shows memes in the cluster and how long  and how many times those memes are mentioned in 2008 and early 2009. The histogram and the related memes support mouse over to provide detailed information as shown in the screen shot. Left left column of the central frame shows an article. With Decruft and CSS processing, only the contents are shown with a consistent format. The right column shows the list of blogs that the meme appeared. Using this interface, further evaluation will be done to determine the quality of extracted memes. MB help annotators to judge the meaningfulness of memes in context.
 
-\begin{figure*}[h!]
+\begin{figure*}[p]
 	\begin{center}
 		{\includegraphics[width=\textwidth]{mockup.jpg}}
 	\end{center}
@@ -607,7 +755,9 @@ We built a web interface names Meme Browser(MB)\footnote{Available at http://sti
 \end{figure*}
 
 \section{Conclusion}
-In this project, we used Hadoop MapReduce to discover informative memes from the large scale blog data. Differently from the previous topic discovery problem, we tried to discover fine-grained unit of information as denoted as \emph{meme} and evaluate them using machine learning technology and human intelligence through Amazon Mechanical Turnk. In the process, we successfully completed challengeable text preprocessing tasks and devised a novel indexed approach for canopy clustering. We collected training data from Amazon Mechanical Turk and tried evaluation of meme clustering with a machine learning technology inspired by ''learning to rank``. The quality of this task is crucially dependent on not only laborous feature enginerring but also targeting appropriate machine learning framework. With the feature set, our classification and regression approaches did not work well, but we are approaching to discovery of informative memes with Bradley-Terry model. We believe that we can discover much information with more robust feature engineering and advanced machine learning technogy.
+In this project, we used Hadoop MapReduce, Crowdsourcing, and machine learning to find informative memes from a large-scale blog collection. While the previous body of literature focused on extracting named entity and abstract topics from blogs, we tried to extract meaningful chunks of information denoted as \emph{meme} and evaluate them using machine learning technology powered by human intelligence through Amazon Mechanical Turk. In the process, we successfully completed massive text preprocessing to extract memes and devised a novel indexed approach for canopy clustering. 
+
+We collected training data from Amazon Mechanical Turk and tried to rank meme clusters with a machine learning technology. The quality of this task is crucially dependent on not only laborious feature engineering but also targeting appropriate machine learning framework. With the feature set, our classification and regression approaches did not work well. However, with better modeling, training set and feature engineering in future, we may get better results. The first step of this attempt will be evaluating memes in context with MB to build better training set. Furthermore, to represent the memes in the blogosphere better, time series modeling would be helpful to model the memes in future.
 
 %
 % The following two commands are all you need in the
