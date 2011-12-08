@@ -580,8 +580,7 @@ Because determining the quality of memes is highly subjective task that may invo
 \subsubsection{Ranking with Supoprt Vector Machine}
 
 
-
-From the result of the Mechanical Turk, we used 1090 meme clusters for training from MT1. The first method for meme ranking is classification using Support Vector Machine. Meme clusters in the training set were classified as positive or negative with the score threshold, and then we calculated the probability that a meme cluster in the training set is classified as the positive set. Sorting the meme clusters in the training set by the probability value allows us to find the most significant meme clusters. To do this we utilized the LIBSVM package\footnote{http://www.csie.ntu.edu.tw/$\sim$cjlin/libsvm/}. Our first task was to find the best threshold value to classify meme clusters in the training set as positive or negative. If a cluster's score is less than the threshold value then its class is negative.  Otherwise it is defined as positive. When we naively chose the threshold value as 0.5, our training data contained only 10\% negative data.   The trained model with this data predicted only 2 negative examples for the training set. As a result, we attempted several threshold values that could proved the best ratio of positive/negative data and prediction accuracy. Table \ref{table:svm} shows the results for several threshold values. We used the tool included LIBSVM package to find the best parameters and feature scale.
+The MTurk results yielded 1090 meme clusters with ranking data to be used in creating a feature set for training. The first method for meme ranking is classification using Support Vector Machine. Meme clusters in the training set were classified as positive or negative using a score threshold, and then we calculated the probability that a meme cluster in the training set should be classified in the positive set. Sorting the meme clusters in the training set by the probability value allows us to find the most significant meme clusters. To do this we utilized the LIBSVM package\footnote{http://www.csie.ntu.edu.tw/$\sim$cjlin/libsvm/}. Our first task was to find the best threshold value to classify meme clusters in the training set as positive or negative. If a cluster's score is less than the threshold value then its class is negative.  Otherwise it is defined as positive. When we naively chose the threshold value as 0.5, our training data contained only 10\% negative data.   The trained model with this data predicted only 2 negative examples for the training set. As a result, we attempted several threshold values that could provide the best ratio of positive/negative data and prediction accuracy. Table \ref{table:svm} shows the results for several threshold values. We used the tool included LIBSVM package to find the best parameters and feature scale.
 
 \begin{table*}[t!h]
 \begin{center}
@@ -689,7 +688,7 @@ Regression consists of estimating the target value based on feature values. Inst
 Unfortunately, this result does not look so informative either.
 
 \subsubsection{Ranking with Pairwise Comparison}
-In the final ranking approach we used a pairwise comparison, known as the Bradley-Terry model \cite{Bradley1952}. The model can be formulated by the following logit-linear form:
+In the final ranking approach, we used a pairwise comparison model, also known as the Bradley-Terry model \cite{Bradley1952}. The model can be formulated by the following logit-linear form:
 \begin{displaymath}
  logit[(P(i\ beats\ j)]=\lambda_i - \lambda_j
 \end{displaymath}
