@@ -731,22 +731,12 @@ where $\lambda_i=log\alpha_i$ for all $i$. If we assume that all comparisons are
 \end{enumerate}
 \end{tabular}
 }
-\caption{Top 20 memes using the Bradley-Terry model}
+\caption{Top 20 memes using the Bradley-Terry Model}
 \label{fig:bt_result}
 \end{center}
 \end{figure*}
 
-Our original plan was training comparator with a binary classifier using Support Vector Machine. With the same training data described above, we can train the binary classifier for two instances. If we have two instances A, B, if A is better than B, the classifier has to return the label 1 for feature values of difference between A and B, otherwise -1. Armed with the accurate classifier, we can sort memes using the classifier as the comparator. But the problem was accuracy of classification. Training accuracy was slightly better than random, 59\%. The comparator has to return different labels for the difference from A to B and vice versa, but there are many cases the classifier is returning the same labels for each difference. With this inaccurate comparator, we cannot use this approach. Figure \ref{fig:bt_result} shows the top 20 memes that are ranked by Bradley-Terry model.
-
-\section{Evaluation}
-
-Context is essential to determine if a meme is informative and meaningful. If the meme ``lipstick on a pig'' is give without any context, it is just a phrase with a nonsensical meaning. However, it gains political meaning when it is provided in a full text: 
-\begin{quote}
-Let's just list this for a second. John McCain says he's about change, too, and so I guess his whole angle is, watch out, George Bush. Except for economic policy, health care policy, tax policy, education policy, foreign policy and Karl Rove style politics, we're really going to shake things up in Washington. That's not change - that's just calling the same thing something different. But you know, you can put \textbf{lipstick on a pig} - it's still a pig. (excerpted from BLOG08-20080916-022-0053659471 of TREC Blogs08 Collection)
-\end{quote}
-
-We built a web interface names Meme Browser(MB)\footnote{http://stingray.ischool.utexas.edu/meme\_browser/} that highlights memes and provided related documents and timeline of a cluster of memes. Figure \ref{fig:mockup} shows an MB page that presents a blog post related to a meme cluster "lipstick on a pig." On top of the page, MB provides the histogram of the number of documents that included the memes in the same cluster. In this example, it is noticeable that the phrase "the lipstick on a pick" gained political connotation in September 2008, and frequently discussed throughout the month. The red bars below the time line histogram shows memes in the cluster and how long  and how many times those memes are mentioned in 2008 and early 2009. The histogram and the related memes support mouse over to provide detailed information as shown in the screen shot. Left left column of the central frame shows an article. With Decruft and CSS processing, only the contents are shown with a consistent format. The right column shows the list of blogs that the meme appeared. Using this interface, further evaluation will be done to determine the quality of extracted memes. MB help annotators to judge the meaningfulness of memes in context.
-
+We built a web interface to our meme clusters named Meme Browser(MB)\footnote{http://stingray.ischool.utexas.edu/meme\_browser/} that highlights memes and provides a list of documents containing the meme and a timeline of the cluster.  Figure \ref{fig:mockup} shows a sample MB page that presents a blog post related to a meme cluster "lipstick on a pig."  At the top of the page, MB provides the histogram of the number of documents that contain memes in the same cluster.  In this example it is noteworthy that the phrase "the lipstick on a pick" gained political connotation and became very popular in September 2008, and was subsequently discussed quite often for approximately another month before becoming infrequent again.  The red bars below the timeline histogram show other memes in the cluster, the period of time they appear in the data, and the number of times they were mentioned in 2008 and early 2009.  The histogram and the related memes support the “onMouseover” Javascript function to provide detailed information as shown in the screen shot.  The main column displays an article containing the meme.  With the help of the Decruft library and CSS processing, only the contents of the article are shown with a consistent format. The right column shows the list of blogs in which the meme appeared.  Using this interface, further evaluation will be done to determine the quality of extracted memes, and it will be used to help annotators judge the meaningfulness of memes in context.
 \begin{figure*}[htb]
 	\begin{center}
 		{\includegraphics[width=\textwidth]{mockup.jpg}}
