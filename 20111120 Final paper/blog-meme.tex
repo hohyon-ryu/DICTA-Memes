@@ -244,7 +244,7 @@ For the purposes of extracting memes, HTML tags were removed with the Beautiful 
 
 Preprocessed Blogs08 data is comprised of key-value pairs where the key is document number(doc\_id) and the value is the preprocessed content of the blog posts. Using Hadoop Streaming, Python MapReduce code extracts common phrases and groups documents by them. The overall algorithm design follows the algorithm presented in \cite{Kolak2008}. However, due to a scalability issue, lower bounds and upper bounds limit the output size of the data and the algorithms are simplified.
 
-Our approach utilizes other optimizations such as stop word ratio check and preposition trimming. The three steps of MapReduce pseudo-code for Meme Extraction are illustrated in the following pseudo codes. The first MapReduce process splits the input text into sentences and extracts trigrams and their indices within the document. It checks if the trigram is comprised with only words. If all of the three words are sto pwords according to a short stop word list shown in Table \ref{table:stopwords}, the trigram is ignored. The reducer removes the phrases($trigrams$) that appear less than 5 times or more than 300,000 times.
+Our approach utilizes other optimizations such as stop word ratio check and preposition trimming. The three steps of MapReduce pseudocode for meme extraction are illustrated below. The first MapReduce process splits the input text into sentences and extracts trigrams and their indices within the document. It checks if the trigram is comprised with only words. If all of the three words are sto pwords according to a short stop word list shown in Table \ref{table:stopwords}, the trigram is ignored. The reducer removes the phrases($trigrams$) that appear less than 5 times or more than 300,000 times.
 
 \begin{table*}[p]
 \begin{center}
@@ -449,7 +449,7 @@ weapons of mass destruction and ballistic missiles&weapons mass destruction prog
 The similarity score must be higher than 0.6 to be clustered into a given centroid.
  
  \item Stop word removal: Because we intend to compare clusters using only words that could potentially be meaningful, we decided to remove common stop words and other boilerplate text. We want to avoid a scenario in which the phrases "You can put lipstick on a pig" and "You can put a book on the table" would be clustered together. Using an extended stop word list that includes month and weekday names, we exclude stop words from the similarity computation. 
- \item Distributed computation: To cluster 4.6 million memes efficiently we used a MapReduce-based distributed Canopy approach, as explained in Apache Mahout Canopy Clustering\footnote{https://cwiki.apache.org/MAHOUT/canopy-clustering.html}. The mapper takes in a partial list of the memes. Using the canopy algorithm, it generates cluster centroids. The reducer does the same clustering process with the aggregated centroids. The pseudo code of the MapReduce process is illustrated as follows:
+ \item Distributed computation: To cluster 4.6 million memes efficiently we used a MapReduce-based distributed Canopy approach, as explained in Apache Mahout Canopy Clustering\footnote{https://cwiki.apache.org/MAHOUT/canopy-clustering.html}. The mapper takes in a partial list of the memes. Using the canopy algorithm, it generates cluster centroids. The reducer does the same clustering process with the aggregated centroids. The pseudocode of the MapReduce process is illustrated as follows:
  
 
 \begin{centering}
