@@ -355,7 +355,7 @@ for \= ($meme$, [($doc\_id$)]) in [mapper 3 output]:\\
 
 \end{centering}
 
-The final output is key, value pairs of a meme and the list of the document ids that the meme appears. In total, 4,610,100 memes are extracted from the TREC Blogs08 collection.
+The final output is (key, value) pairs of a meme and the list of the ids of documents in which the meme appears. In total, we extracted 4,610,100 memes from the TREC Blogs08 collection.
 
 Table \ref{table:memeext} illustrates the parameters used for meme extraction.
 
@@ -433,7 +433,7 @@ The Jaccardi coefficient is not very suitable for our meme clustering as it is h
 RBW(A, B) = {{|A \cap B|} \over {(|A|+|B|) / 2} }
 \end{displaymath}
 
-Table \ref{table:sim} shows that Jaccardi's coefficient is much more sensitive to the length difference between a meme and a centroid. By dampening the sensitivity to the length difference, the RBW coefficient is more sensitive to the intersection. 
+Table \ref{table:sim} shows that Jaccardi's coefficient is much more sensitive to the length difference between a meme and a centroid. By dampening the sensitivity to the length difference, the RBW coefficient is more sensitive to the intersection of their terms. 
 
 \begin{table}[h!t!]
 \begin{center}
@@ -458,7 +458,7 @@ weapons of mass destruction and ballistic missiles&weapons mass destruction prog
 The similarity score should be higher than 0.6 to be clustered into a given centroid.
  
  \item Stop word removal: The memes should be compared using meaningful words instead of stop words. Otherwise, ``You can put lipstick on a pig'' and ``You can put a book on the table" would be clustered together. Using an extended stop word list that includes month and weekday names, we exclude stop words from the similarity computation. 
- \item Distributed computation: To cluster 4.6 millions of memes efficiently, MapReduce-based distributed Canopy approach, explained in Apache Mahout Canopy Clustering\footnote{https://cwiki.apache.org/MAHOUT/canopy-clustering.html}, is used. The mapper takes in a partial list of the memes. Using the canopy algorithm, it generates cluster centroids. The reducer does the same clustering process with the aggregated centroids. The pseudo code of the MapReduce process is illustrated as follows:
+ \item Distributed computation: To cluster 4.6 millions of memes efficiently,  we used a MapReduce-based distributed Canopy approach, explained in Apache Mahout Canopy Clustering\footnote{https://cwiki.apache.org/MAHOUT/canopy-clustering.html}. The mapper takes in a partial list of the memes. Using the canopy algorithm, it generates cluster centroids. The reducer does the same clustering process with the aggregated centroids. The pseudo code of the MapReduce process is illustrated as follows:
  
 
 \begin{centering}
@@ -515,7 +515,7 @@ After the clustering, 2,010,355 cluster centroids were generated, and the 4.6 mi
 
 
 \section{Meme Ranking}
-Now that we have successfully clustered the memes, the task remains to classify them according to a meaningfulness or informativeness ranking. Though classification is a challenge, many of the meme clusters can easily be classified as meaningless because they contain sequences of words such as “2 1956 jamboree tues jan 3 1956 jamboree wed,oct 5th wed oct 4 tues” to do not form a coherent idea. If we extract some statistical features from meme clusters and build the training data indicating informativeness, we can predict informativeness of each meme cluster. Finally, if we build the model of classifier as a regression problem of probability of informativeness given a meme cluster, we can bring order into a set of meme clusters with the probability values. Currently, we are expecting the following features as discriminant to decide a meme cluster's informativeness.
+Now that we have successfully clustered the memes, the task remains to classify them according to a meaningfulness or informativeness ranking. Though classification is a challenge, many of the meme clusters can easily be classified as meaningless because they contain sequences of words such as “2 1956 jamboree tues jan 3 1956 jamboree wed,oct 5th wed oct 4 tues” and do not form a coherent idea. If we extract some statistical features from meme clusters and build the training data based on informativeness, we can predict an informativeness score for each meme cluster. Finally, if we build the model of classifier as a regression problem of probability of meaninfgulness given a meme cluster, we can bring order into a set of meme clusters with the probability values. Currently, we are expecting the following features to be determinant in deciding a meme cluster's informativeness.
 \begin{itemize}
  \item the number of memes in the cluster
  \item average meme length
@@ -539,18 +539,7 @@ which means how similar memes in the cluster are each other.
 \subsubsection{Initial Training Set (MT1)}
 Ranking the meme clusters based upon their meaningfulness or informativeness as described above is a difficult and largely subjective task. Consequently, using machine learning for this task is highly problematic. To aid the process of automated classification of the phrase clusters, we implemented an Amazon Mechanical Turk (MTurk) to utilize human intelligence in building a training set \cite{Barr2006}. MTurk is an Internet service from Amazon for scalable crowdsourcing of simple one-time tasks. It allows \emph{requesters} submit human intelligence tasks (HITs) to be completed by \emph{workers} in exchange for small payments. Requesters approve the results they consider satisfactory, and workers increase their confidence scores with high approval rates.
 
-In this MTurk HIT we displayed to the user a cluster of phrases and three 100-word snippets of text from the blog data in which the phrases appear, along with seven questions, or HITs, related to the meaningfulness of the phrases. The following seven questions were asked to determine if a meme is informative and meaningful: 
-
-\begin{enumerate}
-
-\item Is this English?
-\item Is this a meaningful chunk of information?
-\item Can you identify meaningful nouns?
-\item Is this a common expression that could potentially appear in documents?
-\item Can you name the cluster with one phrase?
-\item Does this meme relate to a specific topic?
-\item Is this a popular phrase or expression? 
-\end{enumerate}
+In this MTurk HIT we displayed to the user a cluster of phrases and three 100-word snippets of text from the blog data in which the phrases appear, along with seven questions, or HITs, related to the meaningfulness of the phrases. Workers were asked questions such as "Is this a meaningful chunk of information?", "Does this meme relate to a specific topic?" and "Is this a popular phrase or expression?".
 
 In total, we submitted 1090 meme clusters to MTurk with seven HITs each. Workers were required to have a HIT approval rate greater than 85\% and to have completed at least 50 approved HITs. All meme clusters were reviewed by three workers to allow for varying subjective assessments. After removing the highest and lowest total scores to eliminate any individual biases, we calculated the mean score of the cluster and normalized on a 0-1 scale. Each meme cluster was then compared to a range of threshold values for the purposes of the Support Vector Machine, as described in the following section. The labels collected by this initial MTurk HIT will be referred to as Mechanical Turk Collection 1(MT1).
 
