@@ -423,14 +423,14 @@ Our processed blog data contains more than 4.6 million memes, and they are highl
 \subsection{Indexed MapReduce Canopy}
 Because the form of memes evolves over time across different media \cite{Leskovec2009}, we must group similar phrases into meme clusters. For example, ``lipstick look good on a pig," ``lipstick on the pig," and "lipstick on this pig" need to be seen in the same cluster. A canopy clustering algorithm \cite{McCallum2000} is used for this meme clustering. However, since we are clustering more than 4.6 million memes into many clusters of very fine granularity, different strategies should be adopted. In our case we used canopy clustering as a single pass approach, and the distance between every meme and every cluster is calculated in $O(n^2)$ computational complexity. The meme clustering task is very different from ordinary document clustering as the number of documents is extremely high while the length of each document is usually fewer than a dozen words. We devised the following optimizations and modifications to efficiently cluster 4.6 million memes:
 \begin{itemize}
- \item Binary vector: A vector is simply a set of words in a meme or a centroid. The set operation is O(1) while list operation is O(n). Also word order is ignored by this method.
- \item Centroid indexing: The centroid is indexed by the words it includes so that when a meme is compared to only with the cluster centroids that include common words.
+ \item Binary vector: A vector is simply a set of words in a meme or a centroid. The set operation is O(1) while the list operation is O(n). Word order is ignored in this method.
+ \item Centroid indexing: The centroid is indexed by the words it includes so that each meme is compared only to the cluster centroids that include common words.
  \item New similarity coefficient: RBS similarity coefficient
  Jaccard's similarity coefficient 
 \begin{displaymath} 
  J(A,B) = {{|A \cap B|}\over{|A \cup B|}}
 \end{displaymath} 
-The Jaccard coefficient is not very suitable for our meme clustering as it is highly sensitive to the length difference between memes. We compare a meme with a cluster centroids, and when a cluster centroid is long, short memes cannot have high coefficient score and get assigned into any cluster. Therefore, we used a new coefficient named RBW coefficient. Instead of dividing by the union, we divide the number of common words by the average length of the two vectors to relieve the sensitivity:\\
+The Jaccard coefficient is not very suitable for our meme clustering as it is highly sensitive to the length difference between memes. We compare memes with cluster centroids, and when a cluster centroid is long, short memes cannot have a high coefficient score and get assigned into the cluster. Therefore, we used a new coefficient named RBW coefficient. Instead of dividing by the union, we divide the number of common words by the average length of the two vectors to reduce sensitivity to length:\\
 \begin{displaymath}
 RBW(A, B) = {{|A \cap B|} \over {(|A|+|B|) / 2} }
 \end{displaymath}
