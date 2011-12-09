@@ -407,7 +407,7 @@ Due to limitations in the Mahout LDA implementation, we decided to use the Yahoo
 \begin{itemize}
  \item Permission denied for excutables in jar package
  \item Synchronization problem of global/lda.dict.dump
- \item Ice::ConnectionLostException problem 
+ \item Ice::ConnectionLostException
 \end{itemize}
 We were able to resolve the first two issues by modifying several lines of code in the script files, but we could not resolve the last problem. According to the Yahoo! LDA implementation author\footnote{Personal communication.}, the lost connection problem is caused by Hadoop. The Yahoo! LDA implementation supports checkpointing and restart mechanisms, but when we attempted a restart the environment reverted back to what it was after the first iteration of LDA. The primary difficulty was the large scale of our collection (4 million memes), and many iterations were required to produce meaningful topic collection. On average each iteration ran for seven minutes with a single machine and 1.5 minutes with five machines. The default number of iterations of Yahoo! LDA implementation is 1,000.
 
