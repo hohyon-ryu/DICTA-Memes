@@ -638,7 +638,7 @@ Looking at the results, it is apparent that our approach is able to recognize se
  \item Wrong approach to ranking the memes
 \end{itemize}
 
-Because evaluating feature engineering and training set is not easy, we try to rank meme clusters using regression method.
+More testing needs to be done in order to determine how these potential causes may be affecting our results.  Using our current approach as a baseline, we intend to modify several components of the process and compare the new results with those detailed in this paper. In the following section, we detail another approach for ranking our meme clusters using regression.
 
 \subsubsection{Ranking with Support Vector Regression}
 Regression consists of estimating the target value based on feature values. Instead of estimating the probability of a meme cluster to be informative, we calculate scores using Support Vector Regression (SVR) to get informative meme clusters using the same training set from SVM experiment (MT1). We used $\epsilon$-SVR. The Root Mean Square Error (RMSE) value for our training set was 0.0171578, a reasonable value. Figure \ref{fig:svr_result} shows the top 20 memes sorted by regression values.
