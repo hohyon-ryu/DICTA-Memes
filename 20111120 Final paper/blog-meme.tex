@@ -224,7 +224,7 @@ Vector & and, set, curr, seas, back, at, art, alle, from, arou, for, 1, take, sp
 \end{center}
 \end{table}
 
-Once the vector generation is completed for all of the documents, the deduplication program scans through the vector files, finds duplicate vectors and writes a removal list, which is a list of document ids that should be deleted in the next step. If a vector is shorter than 5, the document id is added to the removal list. The program notes vector files of $\pm 2$ length of the current vector starting with the same character. Document simalarity is measured by the following formula:
+Once the vector generation is completed, the deduplication program scans through the vector files, finds duplicate vectors and writes a removal list, which is a list of document ids that should be deleted in the next step. If a vector is shorter than 5, the document id is added to the removal list. The program notes vector files of $\pm 2$ length of the current vector starting with the same character. Document simalarity is measured by the following formula:
 \begin{displaymath}
 dsim=\frac{A \cap B}  {min(|A|, |B|)}
 \end{displaymath}
