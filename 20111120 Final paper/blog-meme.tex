@@ -247,7 +247,7 @@ Once the vector generation is completed for all of the documents, the deduplicat
 dsim=\frac{A \cap B}  {min(|A|, |B|)}
 \end{displaymath}
 
-The denominator $min(|A|, |B|)$ is to give a tight denominator. Any document having a similarity score, $dsim > 0.85$, with the current document is added to the removal list. In the third step, the entire collection is copied, excluding the documents on the removal list. 1,570,428 documents (9.4\%) were removed in the deduplication process, leaving 15,104,553(85GB) documents for the remaining preprocessing steps.
+The denominator $min(|A|, |B|)$ is chosen to remain relatively close to the numerator. Any document having a similarity score, $dsim > 0.85$, with the current document is added to the removal list. In the third step, the entire collection is copied, excluding the documents on the removal list. 1,570,428 documents (9.4\%) were removed in the deduplication process, leaving 15,104,553(85GB) documents for the remaining preprocessing steps.
 
 \subsubsection{HTML Strip}
 
