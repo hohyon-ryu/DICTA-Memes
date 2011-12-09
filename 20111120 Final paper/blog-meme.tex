@@ -180,7 +180,7 @@ BLOGS08\footnote{http://ir.dcs.gla.ac.uk/test\_collections/blogs08info.html} is 
 
 \subsection{Preprocessing Blogs08}
 
-Because the collection contains many duplicates, non-English blog posts, advertisement, and HTML tags, the following preprocessing is applied to Blogs08 collection using Beautiful Soup HTML Parser, NLTK, and Decruft packages:
+Because the collection contains many duplicates, non-English blog posts, advertisements, and HTML tags, the following preprocessing is applied to Blogs08 collection using Beautiful Soup HTML Parser, NLTK, and Decruft packages:
 
 \begin{itemize}
 \item Decruft
@@ -321,7 +321,7 @@ for \= ($doc\_id$, [($trigrams$, $index$)]) in [mapper 2 output]:\\
 
 \end{centering}
 
-The third MapReduce process concatenates the adjacent trigrams within a blog post. Mapper 3 concatenates adjacent trigrams into a meme. Before emitting the memes a function trimPrepositions() removes prepositions at the beginning and end of the meme, and a function stopwordRate() checks how many of the words in the meme are stop words using the long stopword list shown in Table \ref{table:stopwords}. If stop words constitute more than 65\% of the words in the meme, the meme is ignored. In Reducer 3, phrases that are too short ($\leqq 5$) or too long ($\geqq 200$) are ignored as they are often timestamps, advertisement, or boiler plate text. The final MapReduce is illustrated as follows:
+The third MapReduce process concatenates the adjacent trigrams within a blog post. Mapper 3 concatenates adjacent trigrams into a meme. Before emitting the memes a function trimPrepositions() removes prepositions at the beginning and end of the meme, and a function stopwordRate() checks how many of the words in the meme are stop words using the long stopword list shown in Table \ref{table:stopwords}. If stop words constitute more than 65\% of the words in the meme, the meme is ignored. In Reducer 3, phrases that are too short ($\leqq 5$) or too long ($\geqq 200$) are ignored as they are often timestamps, advertisements, or boilerplate text. The final MapReduce is illustrated as follows:
 
 \begin{centering}
 \begin{tabbing}
