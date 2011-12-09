@@ -191,7 +191,7 @@ Because the collection contains many duplicates, non-English blog posts, adverti
 
 
 \subsubsection{Decruft}
-Decruft\footnote{http://www.minvolai.com/blog/decruft-arc90s-readability-in-python/} extracts only meaningful content from a blog page, filtering out navigation links, advertisements, sidebar contents, and links to other sites. Decruft is a python implementation of ARC90's readability project, and it improves Python-readability in terms of processing speed. 
+Decruft\footnote{http://www.minvolai.com/blog/decruft-arc90s-readability-in-python/} extracts only meaningful content from a blog page, filtering out navigation links, advertisements, sidebar contents, and links to other sites. Decruft is a Python implementation of ARC90's readability project, and it improves Python-readability in terms of processing speed. 
 
 \subsubsection{Removing non-English Posts}
 We used NLTK\footnote{http://www.nltk.org/} language identification module to determine if the extracted content is written in English. After applying Decruft and removing non-English posts, extracted contents of a blog post are written into a single line per document for the MapReduce meme extraction process.  The number of remaining posts after these first two steps was 166,749,81(96 GB).
