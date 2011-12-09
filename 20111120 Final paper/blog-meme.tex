@@ -394,7 +394,7 @@ Latent Dirichlet Allocation (LDA) characterize the document as the mixture of la
 \begin{displaymath}
  P(w)=\sum_{i=1}^K P(w|z_i)P(z_i)
 \end{displaymath}
-where $K$ is the number of topic for the corpus, $P(z_i)$ is the probability that $i$th topic was sampled for $w$, and $P(w|z_i)$ is the probability of $w$ given the $i$th topic. Using this interpretation, if we find the topic and word distribution for each document to maximize the probability of the entire corpus, we can group memes sharing similar sematical meaning.
+where $K$ is the number of topic for the corpus, $P(z_i)$ is the probability that $i$th topic was sampled for $w$, and $P(w|z_i)$ is the probability of $w$ given the $i$th topic. Using this interpretation, if we find the topic and word distribution for each document to maximize the probability of the entire corpus, we can group memes sharing similar semantical meaning.
 
 Apache Mahout\footnote{http://mahout.apache.org} is an open-source scalable machine learning library that runs on the Hadoop architecture. It includes various machine learning algorithms for tasks such as clustering, classification and recommender systems. Apache Mahout includes an LDA implementation, but it has several drawbacks that led us to opt for a different solution in our study.
 
