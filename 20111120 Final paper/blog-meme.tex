@@ -430,7 +430,7 @@ Because the form of memes evolves over time across different media \cite{Leskove
 \begin{displaymath} 
  J(A,B) = {{|A \cap B|}\over{|A \cup B|}}
 \end{displaymath} 
-The Jaccard coefficient is not very suitable for our meme clustering as it is highly sensitive to the length difference between memes. We compare memes with cluster centroids, and when a cluster centroid is long, short memes cannot have a high coefficient score and get assigned into the cluster. Therefore, we used a new coefficient named RBW coefficient. Instead of dividing by the union, we divide the number of common words by the average length of the two vectors to reduce sensitivity to length:\\
+The Jaccard coefficient is not suitable for our meme clustering as it is highly sensitive to the length difference between memes. We compare memes with cluster centroids, and when a cluster centroid is long, short memes cannot have a high coefficient score and be assigned into the cluster. Therefore, we used a new approach, known as RBW, for the coefficient. Instead of dividing by the union, we divide the number of common words by the average length of the two vectors to reduce sensitivity to length:\\
 \begin{displaymath}
 RBW(A, B) = {{|A \cap B|} \over {(|A|+|B|) / 2} }
 \end{displaymath}
