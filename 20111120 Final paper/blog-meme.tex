@@ -235,7 +235,7 @@ For the purposes of extracting memes, HTML tags were removed with the Beautiful 
 
 \subsection{Meme Extraction with MapReduce}
 
-Preprocessed Blogs08 data is comprised of (key, value) pairs where the key is the document number(doc\_id) and the value is the preprocessed content of the blog posts. Using Hadoop Streaming, Python MapReduce code extracts common phrases and groups documents by them. The overall algorithm design follows the algorithm presented in \cite{Kolak2008}. However, due to a scalability issue, lower bounds and upper bounds limit the output size of the data and the algorithms are simplified.
+Preprocessed Blogs08 data is comprised of (key, value) pairs where the key is the document number(doc\_id) and the value is the preprocessed content of the blog posts. Using Hadoop Streaming, our Python MapReduce code extracts common phrases and groups the documents by them. The overall algorithm design follows the algorithm presented in \cite{Kolak2008}. However, due to a scalability issue, lower bounds and upper bounds limit the output size of the data and the algorithms are simplified.
 
 Our approach utilizes other optimizations such as stop word ratio check and preposition trimming. The three steps of MapReduce pseudocode for meme extraction are illustrated below. The first MapReduce process splits the input text into sentences and extracts trigrams and their indices within the document. It checks if the trigram is comprised with only words. If all three words are stop words, according to a short stop word list shown in Table \ref{table:stopwords}, the trigram is ignored. The reducer removes the phrases($trigrams$) that appear less than five times or more than 300,000 times.
 
