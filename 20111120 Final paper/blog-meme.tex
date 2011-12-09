@@ -205,7 +205,7 @@ The Blogs08 data contains many duplicate documents and documents without a signi
 \item Binary Vector of First 4 Characters of Terms
 \end{itemize}
 
-Instead of comparing each document with all of the others in the corpus, binary vectors of documents are stored in files named by the length of the vector and the lowercased first character of the document. Table \ref{table:dedup} shows an example of a blog post that is indexed in file 00030a. ``00030'' stands for the document length in terms of the number of unique words, and ``a'' stands for the lowercased first character of the document from ``At''. Ignoring HTML tags, the first 4 characters of all the words in the document are stored in the index file as a document vector. By using only the first 4 characters, the vectors use less memory and disk space, and computation for comparison becomes more efficient.
+Instead of comparing each document with all of the others in the corpus, binary vectors of the documents are stored in files named by the length of the vector and the lowercased first character of the document. Table \ref{table:dedup} shows an example of a blog post that is indexed in file 00030a. ``00030'' stands for the document length in terms of the number of unique words, and ``a'' stands for the lowercased first character of the document from ``At''. Ignoring HTML tags, the first 4 characters of all the words in the document are stored in the index file as a document vector. By using only the first 4 characters, the vectors use less memory and disk space, and computation for comparison becomes more efficient.
 
 \begin{table}[h!t!]
 \begin{center}
@@ -242,13 +242,12 @@ Vector & and, set, curr, seas, back, at, art, alle, from, arou, for, 1, take, sp
 \end{center}
 \end{table}
 
-
-Once the vector generation is completed for all the documents, the deduplication program goes through the vector files, find duplicate vectors, and write a removal list which is a list of document ids that should be deleted in the next step. If a vector is shorter than 5, the document id is added to the removal list. The program nodes vector files of $\pm 2$ length of the current vector starting with the same character. Document simalarity is measures by the following formula:
+Once the vector generation is completed for all of the documents, the deduplication program scans through the vector files, finds duplicate vectors and writes a removal list, which is a list of document ids that should be deleted in the next step. If a vector is shorter than 5, the document id is added to the removal list. The program notes vector files of $\pm 2$ length of the current vector starting with the same character. Document simalarity is measured by the following formula:
 \begin{displaymath}
 dsim=\frac{A \cap B}  {min(|A|, |B|)}
 \end{displaymath}
 
-The denominator $min(|A|, |B|)$ was to give a tight denominator. A document that $dsim > 0.85$ with the current document was added to the removal list. In the third step, the entire collection is copied excluding the documents on the removal list. 1,570,428 documents (9.4\%) were removed leaving 15,104,553(85GB) documents after the deduplication process.
+The denominator $min(|A|, |B|)$ is to give a tight denominator. A document that $dsim > 0.85$ with the current document was added to the removal list. In the third step, the entire collection is copied, excluding the documents on the removal list. 1,570,428 documents (9.4\%) were removed, leaving 15,104,553(85GB) documents after the deduplication process.
 
 \subsubsection{HTML Strip}
 
