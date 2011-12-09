@@ -205,7 +205,7 @@ The Blogs08 data contains many duplicate documents and documents without a signi
 \item Binary Vector of First 4 Characters of Terms
 \end{itemize}
 
-Instead of comparing against all other documents, binary vectors of documents are stored in files named by the length of the vector and the lowercased first character of the document. Table \ref{table:dedup} shows an example of a blog post that is indexed in file 00030a. ``00030'' stands for the document length in terms of the number of unique words, and ``a'' stands for the lowercased first character of the document from ``At''. Ignoring HTML tags, the first 4 characters of all the words in the document are stored in the index file as a document vector. By using only the first 4 characters, the vectors use less memory and disk space, and computation for comparison becomes more efficient.
+Instead of comparing each document with all of the others in the corpus, binary vectors of documents are stored in files named by the length of the vector and the lowercased first character of the document. Table \ref{table:dedup} shows an example of a blog post that is indexed in file 00030a. ``00030'' stands for the document length in terms of the number of unique words, and ``a'' stands for the lowercased first character of the document from ``At''. Ignoring HTML tags, the first 4 characters of all the words in the document are stored in the index file as a document vector. By using only the first 4 characters, the vectors use less memory and disk space, and computation for comparison becomes more efficient.
 
 \begin{table}[h!t!]
 \begin{center}
