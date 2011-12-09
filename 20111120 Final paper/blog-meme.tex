@@ -428,18 +428,18 @@ Because the form of memes evolves over time across different media \cite{Leskove
 \begin{displaymath} 
  J(A,B) = {{|A \cap B|}\over{|A \cup B|}}
 \end{displaymath} 
-The Jaccardi coefficient is not very suitable for our meme clustering as it is highly sensitive to the length difference between memes. We compare a meme with a cluster centroids, and when a cluster centroid is long, short memes cannot have high coefficient score and get assigned into any cluster. Therefore, we used a new coefficient named RBW coefficient. Instead of dividing by the union, we divide the number of common words by the average length of the two vectors to relieve the sensitivity:\\
+The Jaccard coefficient is not very suitable for our meme clustering as it is highly sensitive to the length difference between memes. We compare a meme with a cluster centroids, and when a cluster centroid is long, short memes cannot have high coefficient score and get assigned into any cluster. Therefore, we used a new coefficient named RBW coefficient. Instead of dividing by the union, we divide the number of common words by the average length of the two vectors to relieve the sensitivity:\\
 \begin{displaymath}
 RBW(A, B) = {{|A \cap B|} \over {(|A|+|B|) / 2} }
 \end{displaymath}
 
-Table \ref{table:sim} shows that Jaccardi's coefficient is much more sensitive to the length difference between a meme and a centroid. By dampening the sensitivity to the length difference, the RBW coefficient is more sensitive to the intersection of their terms. 
+Table \ref{table:sim} shows that the Jaccard coefficient is much more sensitive to the length difference between a meme and a centroid. By dampening the sensitivity to the length difference, the RBW coefficient is more sensitive to the intersection of their terms. 
 
 \begin{table}[h!t!]
 \begin{center}
 \begin{tabular}{p{3.0cm}|p{2.2cm}|r|r}
 \hline
-\textbf{Meme}&\textbf{Centroid}&\textbf{Jaccardi}&\textbf{RBW}\\
+\textbf{Meme}&\textbf{Centroid}&\textbf{Jaccard}&\textbf{RBW}\\
 \hline
 weapons of mass destruction programs&&1.00&1.00\\
 \hline
@@ -450,7 +450,7 @@ fear of weapons of mass destruction & weapons mass destruction programs iraq&0.4
 weapons of mass destruction and ballistic missiles&weapons mass destruction programs iraq fear&0.37&0.50\\
 \hline
 \end{tabular}
-\caption{Comparison between Jaccardi's coefficient and the proposed RBW coefficient. Jaccardi's coefficient drops quickly as the centroid gets longer. In contrast, the RBW coefficient is less sensitive to the length difference and more sensitive to the intersection of words.}
+\caption{Comparison between the Jaccard coefficient and the proposed RBW coefficient. Jaccard's coefficient drops quickly as the centroid gets longer. In contrast, the RBW coefficient is less sensitive to the length difference and more sensitive to the intersection of words.}
 \label{table:sim}
 \end{center}
 \end{table}
