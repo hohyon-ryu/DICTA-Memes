@@ -449,7 +449,7 @@ weapons of mass destruction and ballistic missiles&weapons mass destruction prog
 The similarity score must be higher than 0.6 to be clustered into a given centroid.
  
  \item Stop word removal: Because we intend to compare clusters using only words that could potentially be meaningful, we decided to remove common stop words and other boilerplate text. We want to avoid a scenario in which the phrases "You can put lipstick on a pig" and "You can put a book on the table" would be clustered together. Using an extended stop word list that includes month and weekday names, we exclude stop words from the similarity computation. 
- \item Distributed computation: To cluster 4.6 million memes efficiently we used a MapReduce-based distributed Canopy approach, explained in Apache Mahout Canopy Clustering\footnote{https://cwiki.apache.org/MAHOUT/canopy-clustering.html}. The mapper takes in a partial list of the memes. Using the canopy algorithm, it generates cluster centroids. The reducer does the same clustering process with the aggregated centroids. The pseudo code of the MapReduce process is illustrated as follows:
+ \item Distributed computation: To cluster 4.6 million memes efficiently we used a MapReduce-based distributed Canopy approach, as explained in Apache Mahout Canopy Clustering\footnote{https://cwiki.apache.org/MAHOUT/canopy-clustering.html}. The mapper takes in a partial list of the memes. Using the canopy algorithm, it generates cluster centroids. The reducer does the same clustering process with the aggregated centroids. The pseudo code of the MapReduce process is illustrated as follows:
  
 
 \begin{centering}
