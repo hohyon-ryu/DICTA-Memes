@@ -180,23 +180,14 @@ BLOGS08\footnote{http://ir.dcs.gla.ac.uk/test\_collections/blogs08info.html} is 
 
 \subsection{Preprocessing Blogs08}
 
-Because the collection contains many duplicates, non-English blog posts, advertisements, and HTML tags, the following preprocessing is applied to Blogs08 collection using Beautiful Soup HTML Parser, NLTK, and Decruft packages:
+Because the collection contains many duplicates, non-English blog posts, advertisements, and HTML tags, the following preprocessing is applied to Blogs08 collection using Beautiful Soup HTML Parser, NLTK, and Decruft packages.
 
-\begin{itemize}
-\item Decruft
-\item Removing non-English posts
-\item Deduplication
-\item HTML Strip
-\end{itemize}
-
-
-\subsubsection{Decruft}
+\subsubsection{Applying Decruft and Removing non-English Posts}
 Decruft\footnote{http://www.minvolai.com/blog/decruft-arc90s-readability-in-python/} extracts only meaningful content from a blog page, filtering out navigation links, advertisements, sidebar contents, and links to other sites. Decruft is a Python implementation of ARC90's readability project, and it improves Python-readability in terms of processing speed. 
 
-\subsubsection{Removing non-English Posts}
 We used the NLTK\footnote{http://www.nltk.org/} language identification module to determine if the extracted content is written in English. After applying Decruft and removing non-English posts, extracted contents of a blog post are written into a single line per document for the MapReduce meme extraction process. The number of remaining posts after these first two steps was 166,749,81(96 GB).
 
-\subsubsection{Deduplication}
+\subsubsection{Deduplication and HTML Strip}
 The Blogs08 data contains many duplicate documents and documents without a significant amount of text. We set a lower-bound of five words and removed duplicates, also using Python. Finding duplicate documents is an $O(n^2)$ operation, which requires a tremendous amount of computation and a long running time. In order to improve efficiency, we applied the following optimizations: first character indexing, similar length indexing and creating a binary vector of first 4 characters of the terms.
 
 To avoid having to compare each document with all of the others in the corpus, binary vectors of the documents are stored in files named by the length of the vector and the lowercased first character of the document. Table \ref{table:dedup} shows an example of a blog post that is indexed in file 00030a. "00030" stands for the document length in terms of the number of unique words, and "a" stands for the lowercased first character of the document from "At". Ignoring HTML tags, the first 4 characters of all the words in the document are stored in the index file as a document vector. By using only the first 4 characters, the vectors use less memory and disk space, and computation for comparison becomes more efficient.
@@ -242,8 +233,6 @@ dsim=\frac{A \cap B}  {min(|A|, |B|)}
 \end{displaymath}
 
 The denominator $min(|A|, |B|)$ is chosen to remain relatively close to the numerator. Any document having a similarity score, $dsim > 0.85$, with the current document is added to the removal list. In the third step, the entire collection is copied, excluding the documents on the removal list. 1,570,428 documents (9.4\%) were removed in the deduplication process, leaving 15,104,553(85GB) documents for the remaining preprocessing steps.
-
-\subsubsection{HTML Strip}
 
 For the purposes of extracting memes, HTML tags were removed with the Beautiful Soup HTML parser\footnote{http://www.crummy.com/software/BeautifulSoup/} and all text was converted to lowercase. The test collection for meme extraction was reduced to 43GB. HTML tags were preserved separately for later use, because this document collection will be used to present the blog post in a web interface.
 
@@ -562,7 +551,7 @@ Determining the quality of memes is highly subjective task that involves an unde
 
 The MTurk results yielded 1090 meme clusters with ranking data to be used in creating a feature set for training. The first method for meme ranking is classification using Support Vector Machine. Meme clusters in the training set were classified as positive or negative using a score threshold, and then we calculated the probability that a meme cluster in the training set should be classified in the positive set. Sorting the meme clusters in the training set by the probability value allows us to find the most significant meme clusters. To do this we utilized the LIBSVM package\footnote{http://www.csie.ntu.edu.tw/$\sim$cjlin/libsvm/}. Our first task was to find the best threshold value to classify meme clusters in the training set as positive or negative. If a cluster's score is less than the threshold value then its class is negative. Otherwise it is defined as positive. When we naively chose the threshold value as 0.5, our training data contained only 10\% negative data. The trained model with this data predicted only 2 negative examples for the training set. As a result, we attempted several threshold values that could provide the best ratio of positive/negative data and prediction accuracy. Table \ref{table:svm} shows the results for several threshold values. We used the tool included LIBSVM package to find the best parameters and feature scale.
 
-\begin{table*}[t!h]
+\begin{table*}[p]
 \begin{center}
 \begin{tabular}{c|p{3.5cm}|p{3.5cm}|p{3.5cm}|p{3.5cm}}
 
